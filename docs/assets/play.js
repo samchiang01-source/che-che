@@ -700,6 +700,14 @@
           el.style.setProperty('--hx', (hand.x - o.x) + 'px');
           el.style.setProperty('--hy', (hand.y - o.y) + 'px');
         }
+        if(hand){
+          // 拋出去的中段位置先算好，keyframes 只要讀變數就好
+          el.style.setProperty('--mx', ((hand.x - o.x) + (t.x - hand.x) * 0.55) + 'px');
+          el.style.setProperty('--my', ((hand.y - o.y) + (t.y - hand.y) * 0.55 - 22) + 'px');
+        } else {
+          el.style.setProperty('--mx', ((t.x - o.x) * 0.55) + 'px');
+          el.style.setProperty('--my', ((t.y - o.y) * 0.55 - 30) + 'px');
+        }
         el.style.setProperty('--fly-delay', (first + i * step) + 's');
       });
     });
@@ -711,6 +719,8 @@
       el.style.removeProperty("--dy");
       el.style.removeProperty("--hx");
       el.style.removeProperty("--hy");
+      el.style.removeProperty("--mx");
+      el.style.removeProperty("--my");
       el.style.removeProperty("--fly-delay");
     });
   }
@@ -810,7 +820,12 @@
     grid.appendChild(b);
   });
 
-  rider.addEventListener("click", doJob);
+  /* 車子一直在移動，要求小孩精準點中它太難了。
+     整個場景都可以點，只避開右上角給家長用的靜音鍵。 */
+  scene.addEventListener("click", function(e){
+    if(e.target.closest && e.target.closest(".mute")) return;
+    doJob();
+  });
 
   muteBtn.addEventListener("click", function(){
     muted = !muted;

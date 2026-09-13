@@ -8,6 +8,7 @@
 
 /* ---------- 場景 ---------- */
 .scene{
+  cursor:pointer;
   position:relative;
   flex:1 1 auto;
   min-height:250px;
@@ -269,9 +270,7 @@
   10% {transform:translate(0,4px) scale(.95) rotate(0deg); opacity:1}
   30% {transform:translate(var(--hx,0px), var(--hy,0px)) scale(.5) rotate(-14deg); opacity:1}
   52% {transform:translate(var(--hx,0px), var(--hy,0px)) scale(.5) rotate(-8deg); opacity:1}
-  76% {transform:translate(calc(var(--hx,0px) + (var(--dx,0px) - var(--hx,0px)) * .55),
-                           calc(var(--hy,0px) + (var(--dy,0px) - var(--hy,0px)) * .55 - 22px))
-       scale(.44) rotate(-36deg); opacity:1}
+  76% {transform:translate(var(--mx,0px), var(--my,0px)) scale(.44) rotate(-36deg); opacity:1}
   100%{transform:translate(var(--dx,0px), var(--dy,0px)) scale(.22) rotate(-68deg); opacity:0}
 }
 
@@ -281,7 +280,7 @@
 }
 @keyframes toss{
   0%{transform:translate(0,0) scale(1) rotate(0deg); opacity:1}
-  55%{transform:translate(calc(var(--dx,0px) * .55), calc(var(--dy,0px) * .55 - 30px)) scale(.95) rotate(-20deg); opacity:1}
+  55%{transform:translate(var(--mx,0px), var(--my,0px)) scale(.95) rotate(-20deg); opacity:1}
   100%{transform:translate(var(--dx,0px), var(--dy,0px)) scale(.4) rotate(-45deg); opacity:0}
 }
 
