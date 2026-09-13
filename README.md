@@ -71,6 +71,16 @@ node tools/make-icons.mjs
 
 `tools/make-icons.mjs` 用 Node 內建的 zlib 直接寫 PNG，所以不需要 `node_modules`。改圖示請改那支程式，不要直接改 PNG。
 
+## 改完之後要蓋版本號
+
+```bash
+node tools/stamp.mjs
+```
+
+HTML 引用資源時會帶上該檔案內容的雜湊，例如 `assets/play.js?v=38b8058c`。檔案一改雜湊就變，瀏覽器和 CDN 一定會重新抓，不會發生「明明改了卻看不到變化」。沒改的檔案雜湊不變，快取照常有效。
+
+**每次動到 `docs/assets/` 底下的東西，commit 前都要跑一次。**
+
 ## 部署
 
 同一份 `docs/` 同時發到兩個地方，內容一樣，兩個網址都能用。**兩邊都是推上 `main` 就自動更新，這個 repo 裡沒有任何 CI 設定檔**——兩個平台各自去拉 GitHub。
