@@ -149,7 +149,7 @@
 @keyframes spray{
   0%{opacity:0; transform:translate(0,0) scale(.3)}
   25%{opacity:1}
-  100%{opacity:0; transform:translate(76px,-46px) scale(1.5)}
+  100%{opacity:0; transform:translate(-76px,-46px) scale(1.5)}
 }
 .spray.s2{animation-delay:.16s}
 .spray.s3{animation-delay:.32s}
@@ -157,9 +157,9 @@
 .notes{transform-box:fill-box}
 .rider.acting .notes{animation:notes 1.9s ease-out}
 @keyframes notes{
-  0%{opacity:0; transform:translateY(0)}
+  0%{opacity:0; transform:scaleX(-1) translateY(0)}
   18%{opacity:1}
-  100%{opacity:0; transform:translateY(-62px)}
+  100%{opacity:0; transform:scaleX(-1) translateY(-62px)}
 }
 .notes.n2{animation-delay:.4s}
 .notes.n3{animation-delay:.85s}
@@ -237,3 +237,122 @@
   .cloud{animation:none}
   .wheel,.drum,.beacon{animation:none}
 }
+
+/* ---------- 工作現場的道具 ---------- */
+/* 道具跟車子共用 .lane 的座標系，bottom 可以超過 100% 跑到路面上方 */
+.props{
+  position:absolute; inset:0;
+  pointer-events:none;
+}
+
+.prop{position:absolute}
+.prop svg{display:block; width:100%; height:auto; overflow:visible}
+
+/* 垃圾袋：被吸進垃圾車 */
+.bag{transform-origin:50% 100%}
+.props.working .bag{animation:suck .85s cubic-bezier(.5,-0.2,.8,.6) forwards}
+.props.working .b2{animation-delay:.22s}
+.props.working .b3{animation-delay:.44s}
+@keyframes suck{
+  0%{transform:translate(0,0) scale(1) rotate(0deg); opacity:1}
+  60%{transform:translate(-60%,-40%) scale(.8) rotate(-25deg); opacity:1}
+  100%{transform:translate(-160%,-10%) scale(0) rotate(-70deg); opacity:0}
+}
+
+/* 工地：泥土地變成鋪平的水泥 */
+.site .slab{opacity:0}
+.props.working .site .dirt{animation:fade-out 1.1s ease .7s forwards}
+.props.working .site .slab{animation:fade-in 1.1s ease .7s forwards}
+@keyframes fade-out{to{opacity:0}}
+@keyframes fade-in{to{opacity:1}}
+
+
+/* 房子：火在燒，被噴水之後熄掉並冒煙 */
+.flame{transform-box:fill-box; transform-origin:50% 100%; animation:flicker .42s ease-in-out infinite alternate}
+.f2{animation-delay:-.2s}
+.f3{animation-delay:-.31s}
+@keyframes flicker{
+  from{transform:scale(1) translateY(0)}
+  to{transform:scale(1.18) translateY(-3px)}
+}
+.props.working .flames{animation:douse 1.5s ease-in .5s forwards}
+@keyframes douse{
+  0%{opacity:1; transform:scale(1)}
+  70%{opacity:.55; transform:scale(.45)}
+  100%{opacity:0; transform:scale(0)}
+}
+.flames{transform-box:fill-box; transform-origin:50% 100%}
+
+.puff{opacity:0; transform-box:fill-box; transform-origin:50% 50%}
+.props.working .puff{animation:puff 2s ease-out 1.4s forwards}
+.props.working .puff.p2{animation-delay:1.7s}
+.props.working .puff.p3{animation-delay:2s}
+@keyframes puff{
+  0%{opacity:0; transform:translateY(0) scale(.4)}
+  30%{opacity:.85}
+  100%{opacity:0; transform:translateY(-46px) scale(1.5)}
+}
+
+/* 紙箱：被送進店裡 */
+.props.working .box{animation:deliver 1.1s cubic-bezier(.4,0,.5,1) .5s forwards}
+.props.working .x2{animation-delay:.85s}
+@keyframes deliver{
+  0%{transform:translate(0,0); opacity:1}
+  45%{transform:translate(120%,-70%); opacity:1}
+  100%{transform:translate(240%,0); opacity:0}
+}
+
+/* 月台上的乘客：上車 */
+.person{transform-box:fill-box; transform-origin:50% 100%}
+.props.working .person{animation:board 1s ease-in .6s forwards}
+.props.working .person.p2{animation-delay:.9s}
+.props.working .person.p3{animation-delay:1.2s}
+@keyframes board{
+  0%{transform:translateX(0) scale(1); opacity:1}
+  100%{transform:translateX(-60px) scale(.7); opacity:0}
+}
+
+/* 輕軌到站開門 */
+.rider.acting .door{animation:door-open 1.4s ease .6s}
+@keyframes door-open{
+  0%,100%{opacity:1}
+  25%,75%{opacity:.25}
+}
+
+/* ---------- 字幕：給家長照著念，小孩聽語音 ---------- */
+.caption{
+  position:absolute;
+  left:50%; top:14px;
+  transform:translate(-50%,-14px);
+  max-width:min(90%,560px);
+  padding:10px 20px;
+  border-radius:999px;
+  background:rgba(255,255,255,.94);
+  border:2px solid var(--edge);
+  font-family:var(--font-zh);
+  font-weight:900;
+  font-size:clamp(14px,3.4vw,18px);
+  line-height:1.4;
+  color:var(--ink);
+  text-align:center;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .3s ease, transform .3s ease;
+}
+.caption.on{
+  opacity:1;
+  transform:translate(-50%,0);
+}
+
+@media (prefers-reduced-motion:reduce){
+  .flame{animation:none}
+  .props.working .bag,
+  .props.working .box,
+  .props.working .person{animation-duration:.01s}
+}
+
+/* 車子的圖都是車頭朝左畫的，統一翻面，讓車頭朝向前進的方向。
+   翻面之後車尾在左邊，所以工作現場也都擺在車子左側，
+   剛好對上真車的樣子：垃圾車後方上料、水泥車後方出料、卡車後方卸貨。 */
+.rider svg,
+.pick svg{transform:scaleX(-1)}

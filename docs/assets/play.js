@@ -63,7 +63,7 @@
     try{
       window.speechSynthesis.cancel();
       var u = new SpeechSynthesisUtterance(text);
-      u.lang = "zh-TW"; u.rate = 0.82; u.pitch = 1.15;
+      u.lang = "zh-TW"; u.rate = 0.8; u.pitch = 1.12;
       window.speechSynthesis.speak(u);
     }catch(e){ /* 沒有中文語音就跳過 */ }
   }
@@ -133,6 +133,16 @@
     });
   }
 
+  // 水柱聲：噴的時候用
+  function waterSpray(){
+    noiseBurst({f:1800, to:900, dur:1.3, gain:0.13, q:0.8});
+  }
+
+  // 倒水泥：低沉的嘩啦
+  function pourSound(){
+    noiseBurst({f:520, to:180, dur:1.5, gain:0.16, q:0.6});
+  }
+
   /* ============ 車子圖形 ============ */
   function wheel(cx, cy, r){
     return '<g class="wheel">' +
@@ -152,9 +162,52 @@
       '</g>';
   }
 
+  /* ============ 工作現場的道具 ============ */
+  function prop(cls, left, bottom, width, svg){
+    return '<div class="prop ' + cls + '" style="left:' + left + '%;bottom:' + bottom + '%;width:' + width + '%">' + svg + '</div>';
+  }
+
+  var BAG =
+    '<svg viewBox="0 0 40 46" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<path d="M5 44 Q1 22 12 14 L28 14 Q39 22 35 44 Z" fill="#3F7A3F"/>' +
+    '<path d="M12 14 L15 4 L25 4 L28 14 Z" fill="#2E5E2E"/>' +
+    '<path d="M12 22 Q20 28 28 22" stroke="#5A9A5A" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+    '</svg>';
+
+  var BOX =
+    '<svg viewBox="0 0 44 38" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<rect x="2" y="8" width="40" height="28" rx="3" fill="#C89A5B"/>' +
+    '<rect x="2" y="8" width="40" height="7" rx="3" fill="#B0854A"/>' +
+    '<rect x="19" y="8" width="6" height="28" fill="#A87B41"/>' +
+    '</svg>';
+
+  // 外層 g 負責擺位置，內層 g 才掛 class：CSS 的 transform 會蓋掉
+  // presentation attribute，分兩層才不會動畫一跑就跳回原點
+  function person(x, tint, n){
+    return '<g transform="translate(' + x + ' 0)">' +
+      '<g class="person p' + n + '">' +
+      '<circle cx="9" cy="9" r="7" fill="#4A5A66"/>' +
+      '<rect x="2" y="18" width="14" height="24" rx="6" fill="' + tint + '"/>' +
+      '</g></g>';
+  }
+
+  var PLATFORM =
+    '<svg viewBox="0 0 96 62" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<rect x="0" y="46" width="96" height="16" rx="3" fill="#C4CDD4"/>' +
+    '<rect x="0" y="46" width="96" height="5" rx="2" fill="#DCE3E8"/>' +
+    person(14, "#E0653F", 1) + person(40, "#2F7FD1", 2) + person(66, "#7A4FA8", 3) +
+    '</svg>';
+
   var VEHICLES = [
     {
       id:"garbage", name:"垃圾車", tint:"#E3B90A", track:"road", sound:furElise,
+      job:"垃圾車把垃圾載走，馬路就變乾淨了",
+      stop:22,
+      jobSound:furElise,
+      props:
+        prop("bag b1", 68, 30, 5.5, BAG) +
+        prop("bag b2", 73, 30, 5.5, BAG) +
+        prop("bag b3", 78, 30, 5.5, BAG),
       svg: '<svg viewBox="0 0 380 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="垃圾車">' +
         '<g class="body">' +
         '<rect x="82" y="52" width="212" height="72" rx="8" fill="#EFC81C"/>' +
@@ -178,6 +231,17 @@
     },
     {
       id:"mixer", name:"水泥車", tint:"#EE7B2E", track:"road", sound:engineRumble,
+      job:"水泥車載水泥來，把地鋪得平平的",
+      stop:20,
+      jobSound:function(){ engineRumble(); pourSound(); },
+      props:
+        prop("site", 66, 28, 26,
+          '<svg viewBox="0 0 160 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+          '<path class="dirt" d="M4 36 Q22 12 44 22 Q66 6 92 20 Q120 10 156 36 Z" fill="#A1703F"/>' +
+          '<path class="dirt" d="M14 36 Q30 24 44 30 Q62 22 78 30 Q96 22 116 34 Z" fill="#8A5C30"/>' +
+          '<rect class="slab" x="2" y="24" width="156" height="14" rx="3" fill="#B9BFC4"/>' +
+          '<rect class="slab" x="2" y="24" width="156" height="4" rx="2" fill="#D2D7DB"/>' +
+          '</svg>'),
       svg: '<svg viewBox="0 0 380 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="水泥車">' +
         '<g class="body">' +
         '<rect x="76" y="106" width="248" height="20" rx="5" fill="#535E6A"/>' +
@@ -202,6 +266,29 @@
     },
     {
       id:"fire", name:"消防車", tint:"#E03131", track:"road", sound:siren,
+      job:"房子失火了，消防車噴水把火滅掉",
+      stop:18,
+      jobSound:function(){ siren(); waterSpray(); },
+      props:
+        prop("house", 70, 100, 20,
+          '<svg viewBox="0 0 120 116" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+          '<g class="flames">' +
+          '<path class="flame f1" d="M44 40 Q36 24 46 10 Q50 24 60 16 Q66 32 54 42 Z" fill="#F5822B"/>' +
+          '<path class="flame f2" d="M64 38 Q58 26 68 14 Q71 26 79 20 Q84 33 74 40 Z" fill="#F2B01E"/>' +
+          '<path class="flame f3" d="M52 42 Q48 32 56 24 Q58 33 64 28 Q68 38 60 44 Z" fill="#F5D430"/>' +
+          '</g>' +
+          '<g class="smoke">' +
+          '<circle class="puff p1" cx="50" cy="34" r="11" fill="#B9C2C9"/>' +
+          '<circle class="puff p2" cx="66" cy="30" r="8" fill="#CBD3D9"/>' +
+          '<circle class="puff p3" cx="58" cy="26" r="6" fill="#DEE4E8"/>' +
+          '</g>' +
+          '<path d="M8 54 L60 22 L112 54 Z" fill="#C0603F"/>' +
+          '<rect x="20" y="52" width="80" height="58" fill="#F0E4D2"/>' +
+          '<rect x="20" y="52" width="80" height="5" fill="#DCCDB6"/>' +
+          '<rect x="50" y="80" width="20" height="30" rx="2" fill="#8A6A4F"/>' +
+          '<rect x="28" y="64" width="16" height="14" rx="2" fill="#BFE3F2"/>' +
+          '<rect x="76" y="64" width="16" height="14" rx="2" fill="#BFE3F2"/>' +
+          '</svg>'),
       svg: '<svg viewBox="0 0 380 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="消防車">' +
         '<g class="body">' +
         '<rect x="78" y="58" width="256" height="68" rx="8" fill="#DC2B2B"/>' +
@@ -221,16 +308,32 @@
         '<rect x="24" y="44" width="20" height="12" rx="5" fill="#1E88E5" class="beacon"/>' +
         '<rect x="50" y="44" width="20" height="12" rx="5" fill="#E53935" class="beacon b2"/>' +
         '<rect x="10" y="108" width="14" height="16" rx="4" fill="#5D6874"/>' +
-        '<circle cx="340" cy="80" r="9" fill="#9EA7AF"/>' +
-        '<g class="spray"><circle cx="352" cy="78" r="9" fill="#7EC8F0" opacity=".9"/></g>' +
-        '<g class="spray s2"><circle cx="352" cy="84" r="6" fill="#A8DCF0" opacity=".9"/></g>' +
-        '<g class="spray s3"><circle cx="352" cy="72" r="7" fill="#5FB8E6" opacity=".9"/></g>' +
+        '<circle cx="150" cy="22" r="9" fill="#9EA7AF"/>' +
+        '<g class="spray"><circle cx="162" cy="20" r="9" fill="#7EC8F0" opacity=".9"/></g>' +
+        '<g class="spray s2"><circle cx="162" cy="26" r="6" fill="#A8DCF0" opacity=".9"/></g>' +
+        '<g class="spray s3"><circle cx="162" cy="14" r="7" fill="#5FB8E6" opacity=".9"/></g>' +
         '</g>' +
         wheel(116,134,26) + wheel(250,134,26) + wheel(312,134,26) +
         '</svg>'
     },
     {
       id:"truck", name:"卡車", tint:"#2F7FD1", track:"road", sound:truckHorn,
+      job:"卡車把貨物送到店裡，店裡就有東西賣了",
+      stop:16,
+      jobSound:truckHorn,
+      props:
+        prop("shop", 74, 100, 22,
+          '<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+          '<rect x="12" y="34" width="96" height="66" fill="#EDE2D4"/>' +
+          '<rect x="4" y="24" width="112" height="14" rx="4" fill="#2F7FD1"/>' +
+          '<rect x="4" y="24" width="112" height="5" rx="2" fill="#5AA0DD"/>' +
+          '<rect x="48" y="58" width="24" height="42" rx="2" fill="#8A6A4F"/>' +
+          '<circle cx="67" cy="80" r="2.5" fill="#E8DCC8"/>' +
+          '<rect x="20" y="48" width="22" height="20" rx="2" fill="#BFE3F2"/>' +
+          '<rect x="78" y="48" width="22" height="20" rx="2" fill="#BFE3F2"/>' +
+          '</svg>') +
+        prop("box x1", 62, 30, 5.5, BOX) +
+        prop("box x2", 67, 30, 5.5, BOX),
       svg: '<svg viewBox="0 0 380 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="卡車">' +
         '<g class="body">' +
         '<rect x="112" y="40" width="226" height="86" rx="6" fill="#EDF2F6"/>' +
@@ -253,6 +356,10 @@
     },
     {
       id:"thsr", name:"高鐵", tint:"#F26A21", track:"viaduct", sound:whoosh,
+      job:"高鐵跑得好快，載大家去很遠的地方",
+      stop:14,
+      jobSound:whoosh,
+      props: prop("platform", 78, 50, 16, PLATFORM),
       svg: '<svg viewBox="0 0 520 140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="高鐵">' +
         '<g class="body">' +
         '<path d="M14 104 Q60 40 168 34 L470 34 Q498 34 498 58 L498 104 Z" fill="#FAFCFD"/>' +
@@ -275,14 +382,18 @@
     },
     {
       id:"lrt", name:"輕軌", tint:"#00A167", track:"grass", sound:dingDing,
+      job:"輕軌到站了，叮叮，大家上車囉",
+      stop:22,
+      jobSound:dingDing,
+      props: prop("platform", 72, 40, 15, PLATFORM),
       svg: '<svg viewBox="0 0 440 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="輕軌">' +
         '<g class="body">' +
         '<path d="M12 112 Q12 36 56 34 L398 34 Q426 34 426 62 L426 112 Z" fill="#FBFDFD"/>' +
         '<path d="M12 112 Q12 36 56 34 L398 34 Q426 34 426 62 L426 112 Z" fill="none" stroke="#D5DEE4" stroke-width="3"/>' +
         '<path d="M12 96 Q12 44 56 42 L120 42 L120 78 L12 78 Z" fill="#28323B"/>' +
-        '<rect x="132" y="48" width="60" height="30" rx="5" fill="#28323B"/>' +
-        '<rect x="204" y="48" width="60" height="30" rx="5" fill="#28323B"/>' +
-        '<rect x="276" y="48" width="60" height="30" rx="5" fill="#28323B"/>' +
+        '<rect class="door" x="132" y="48" width="60" height="30" rx="5" fill="#28323B"/>' +
+        '<rect class="door" x="204" y="48" width="60" height="30" rx="5" fill="#28323B"/>' +
+        '<rect class="door" x="276" y="48" width="60" height="30" rx="5" fill="#28323B"/>' +
         '<rect x="348" y="48" width="66" height="30" rx="5" fill="#28323B"/>' +
         '<rect x="12" y="88" width="414" height="12" fill="#00A167"/>' +
         '<rect x="12" y="100" width="414" height="5" fill="#7FD0AE"/>' +
@@ -298,40 +409,119 @@
   ];
 
   /* ============ 接線 ============ */
-  var scene = document.getElementById("scene");
-  var rider = document.getElementById("rider");
-  var grid  = document.getElementById("grid");
+  var scene   = document.getElementById("scene");
+  var rider   = document.getElementById("rider");
+  var propsEl = document.getElementById("props");
+  var caption = document.getElementById("caption");
+  var grid    = document.getElementById("grid");
   var muteBtn = document.getElementById("mute");
+
   var current = VEHICLES[0];
-  var actTimer = null;
+  var timers = [];
+  var busy = false;
+
+  // 開車動畫的起訖，要跟 play.css 的 @keyframes drive 一致
+  var DRIVE_FROM = -52, DRIVE_TO = 106, DRIVE_SECONDS = 9;
 
   // 場景上的車和車庫按鈕會同時出現，clipPath 的 id 必須各自不同
   function uniqueIds(html, suffix){
     return html.replace(/mx-drum/g, "mx-drum-" + suffix);
   }
 
-  function show(v, withSound){
-    current = v;
-    scene.setAttribute("data-track", v.track);
-    rider.innerHTML = uniqueIds(v.svg, "scene");
-    rider.setAttribute("aria-label", v.name);
-    // 讓車子從左邊重新開進來
+  function clearTimers(){
+    timers.forEach(clearTimeout);
+    timers = [];
+  }
+  function later(fn, ms){ timers.push(setTimeout(fn, ms)); }
+
+  function leftPercentNow(){
+    var lane = rider.parentNode.getBoundingClientRect();
+    if(!lane.width) return DRIVE_FROM;
+    return (rider.getBoundingClientRect().left - lane.left) / lane.width * 100;
+  }
+
+  // 停在原地：把動畫換成固定的 left，位置不跳動
+  function freezeAt(pct){
+    rider.style.animation = "none";
+    rider.style.transition = "none";
+    rider.style.left = pct + "%";
+    void rider.offsetWidth;
+  }
+
+  // 從指定位置接著開，用負的 delay 把動畫捲到對應的進度
+  function resumeFrom(pct){
+    var progress = (pct - DRIVE_FROM) / (DRIVE_TO - DRIVE_FROM);
+    rider.style.transition = "none";
+    rider.style.left = "";
+    rider.style.animation = "";
+    rider.style.animationDelay = (-progress * DRIVE_SECONDS) + "s";
+  }
+
+  function resetMotion(){
+    rider.style.transition = "none";
+    rider.style.left = "";
     rider.style.animation = "none";
     void rider.offsetWidth;
     rider.style.animation = "";
+    rider.style.animationDelay = "";
+  }
+
+  function show(v, withSound){
+    clearTimers();
+    busy = false;
+    current = v;
+
+    scene.setAttribute("data-track", v.track);
+    rider.innerHTML = uniqueIds(v.svg, "scene");
+    rider.setAttribute("aria-label", v.name + "，點一下看它工作");
+    propsEl.className = "props";
+    propsEl.innerHTML = v.props;
+    caption.textContent = "";
+    caption.classList.remove("on");
+    rider.classList.remove("acting");
+    resetMotion();
+
     Array.prototype.forEach.call(grid.children, function(b){
       b.setAttribute("aria-pressed", String(b.dataset.id === v.id));
     });
     if(withSound){ say(v.name); }
   }
 
-  function act(){
-    rider.classList.remove("acting");
-    void rider.offsetWidth;
-    rider.classList.add("acting");
-    clearTimeout(actTimer);
-    actTimer = setTimeout(function(){ rider.classList.remove("acting"); }, 2200);
-    current.sound();
+  /* 點車子 → 開到工作現場、停下來、把工作做完、再繼續開 */
+  function doJob(){
+    if(busy){ current.jobSound(); return; }  // 連點時至少要有聲音回應
+    busy = true;
+    clearTimers();
+
+    var v = current;
+    var parked = v.stop;
+
+    // 1. 滑到工作現場
+    freezeAt(leftPercentNow());
+    rider.style.transition = "left .9s cubic-bezier(.32,.72,.3,1)";
+    rider.style.left = parked + "%";
+
+    // 2. 到了就開工
+    later(function(){
+      propsEl.classList.add("working");
+      rider.classList.add("acting");
+      caption.textContent = v.job;
+      caption.classList.add("on");
+      v.jobSound();
+      say(v.job);
+    }, 950);
+
+    // 3. 工作完成，現場變乾淨 / 變好
+    later(function(){ propsEl.classList.add("done"); }, 3200);
+
+    // 4. 收工，恢復原狀讓他可以再玩一次
+    later(function(){
+      caption.classList.remove("on");
+      rider.classList.remove("acting");
+      propsEl.className = "props";
+      resumeFrom(parked);
+      busy = false;
+    }, 5200);
   }
 
   VEHICLES.forEach(function(v, i){
@@ -349,7 +539,7 @@
     grid.appendChild(b);
   });
 
-  rider.addEventListener("click", act);
+  rider.addEventListener("click", doJob);
 
   muteBtn.addEventListener("click", function(){
     muted = !muted;

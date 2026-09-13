@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "che-che",
+  "compatibility_date": "2026-09-11",
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    // 這個站沒有建置步驟，docs/ 直接就是要送出去的內容
+    "directory": "docs",
+    // 找不到的網址顯示 404.html，而不是空白頁
+    "not_found_handling": "404-page"
+  }
+}
