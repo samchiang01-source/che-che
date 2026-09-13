@@ -148,6 +148,12 @@
     noiseBurst({f:2600, to:900, dur:0.5, at:at, gain:0.11, q:0.5});
   }
 
+  // 開走時的道別聲，配合大家揮手
+  function byeChime(){
+    tone({f:659.25, dur:0.3, type:"triangle", gain:0.16});
+    tone({f:880, at:0.22, dur:0.42, type:"triangle", gain:0.16});
+  }
+
   // 每件貨物飛出去時的時間點，跟畫面上的動畫對齊
   var LAND = [1.2, 1.65, 2.1];
 
@@ -227,6 +233,36 @@
       '<circle cx="18" cy="17" r="1.5" fill="#2B3138"/>' +
       '<path d="M12 21 Q15 24 18 21" stroke="#2B3138" stroke-width="1.3" fill="none" stroke-linecap="round"/>' +
       '<g class="arm"><rect x="22" y="27" width="6" height="19" rx="3" fill="' + vest + '"/></g>' +
+      '<rect class="hand-port" x="20" y="6" width="10" height="10" fill="none" pointer-events="none"/>' +
+      '</svg>';
+  }
+
+  // 場景裡的小孩。工作做完會揮手，把「這是我們的社區」連起來。
+  function kid(shirt){
+    return '<svg viewBox="0 0 26 42" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+      '<rect x="1.5" y="21" width="4.5" height="12" rx="2.25" fill="' + shirt + '"/>' +
+      '<rect x="5" y="19" width="16" height="22" rx="6" fill="' + shirt + '"/>' +
+      '<circle cx="13" cy="11" r="9" fill="#F7D8B6"/>' +
+      '<path d="M4 9 A 9 9 0 0 1 22 9 Z" fill="#3A2E28"/>' +
+      '<circle cx="9.6" cy="12" r="1.7" fill="#2B3138"/>' +
+      '<circle cx="16.4" cy="12" r="1.7" fill="#2B3138"/>' +
+      '<path d="M9.8 16 Q13 19.2 16.2 16" stroke="#2B3138" stroke-width="1.4" fill="none" stroke-linecap="round"/>' +
+      '<g class="wave"><rect x="20" y="19" width="4.5" height="13" rx="2.25" fill="' + shirt + '"/></g>' +
+      '</svg>';
+  }
+
+  // 店員。手在左邊，朝著卡車伸出去接貨。
+  function clerk(tint){
+    return '<svg viewBox="0 0 30 54" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+      '<rect x="7" y="26" width="18" height="27" rx="6" fill="' + tint + '"/>' +
+      '<rect x="7" y="36" width="18" height="17" rx="2" fill="#F4EFE6"/>' +
+      '<circle cx="15" cy="16" r="8" fill="#F7D8B6"/>' +
+      '<path d="M6 15 A 9 9 0 0 1 24 15 Z" fill="#3A2E28"/>' +
+      '<circle cx="12" cy="17" r="1.5" fill="#2B3138"/>' +
+      '<circle cx="18" cy="17" r="1.5" fill="#2B3138"/>' +
+      '<path d="M12 21 Q15 24 18 21" stroke="#2B3138" stroke-width="1.3" fill="none" stroke-linecap="round"/>' +
+      '<g class="arm"><rect x="0" y="27" width="6" height="19" rx="3" fill="' + tint + '"/></g>' +
+      '<rect class="hand-port" x="-3" y="8" width="11" height="11" fill="none" pointer-events="none"/>' +
       '</svg>';
   }
 
@@ -256,20 +292,23 @@
       id:"garbage", name:"垃圾車", tint:"#E3B90A", track:"road",
       sound:furElise,
       job:"大家把垃圾拿出來，一袋一袋丟進垃圾車裡",
+      thanks:"謝謝垃圾車，我們住的地方才乾淨",
       stop:44,
       jobSound:function(){ furElise(); LAND.forEach(thud); },
-      fly:[{sel:".bag", target:".load-port"}],
+      fly:[{sel:".bag", via:".worker .hand-port", target:".load-port", step:1.2, first:0.3}],
+      jobMs:7200,
       props:
-        prop("bag b1", 25, 30, 5.8, BAG) +
-        prop("bag b2", 30.5, 30, 5.8, BAG) +
-        prop("bag b3", 36, 30, 5.8, BAG) +
-        prop("worker", 42, 30, 5.2, worker("#F5A524")),
+        prop("bag b1", 27, 30, 5.8, BAG) +
+        prop("bag b2", 32, 30, 5.8, BAG) +
+        prop("bag b3", 37, 30, 5.8, BAG) +
+        prop("worker", 43, 30, 5.6, worker("#F5A524")) +
+        prop("kid", 15, 30, 4.4, kid("#E0653F")),
       svg: '<svg viewBox="0 0 380 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="垃圾車">' +
         '<g class="body">' +
         '<rect x="82" y="52" width="212" height="72" rx="8" fill="#EFC81C"/>' +
         '<rect x="82" y="52" width="212" height="16" rx="6" fill="#D3AE10"/>' +
         // 車斗裡越堆越高的垃圾
-        '<g class="fill-load"><rect x="90" y="64" width="196" height="56" rx="4" fill="#4E7D34"/>' +
+        '<g class="fill-steps"><rect x="90" y="64" width="196" height="56" rx="4" fill="#4E7D34"/>' +
         '<circle cx="130" cy="68" r="10" fill="#5C8F3E"/><circle cx="190" cy="64" r="12" fill="#5C8F3E"/>' +
         '<circle cx="248" cy="69" r="9" fill="#5C8F3E"/></g>' +
         '<rect x="252" y="38" width="66" height="86" rx="8" fill="#D3AE10"/>' +
@@ -290,21 +329,51 @@
     },
     {
       /* 水泥車也是從車尾的進料口裝砂石，裝滿之後滾筒一邊轉一邊載走。 */
+      /* 水泥車的意義是蓋房子，所以要演完整條因果鏈：
+         工人把砂石裝進滾筒 → 滾筒轉 → 水泥送到工地 → 房子一層一層蓋起來。 */
       id:"mixer", name:"水泥車", tint:"#EE7B2E", track:"road",
       sound:engineRumble,
-      job:"砂石裝進滾筒裡，水泥車一邊轉一邊載去蓋房子",
-      stop:44,
-      jobSound:function(){ engineRumble(); LAND.forEach(gravel); },
-      fly:[{sel:".rock", target:".load-port"}],
+      job:"砂石裝進滾筒，水泥車把水泥送到工地",
+      thanks:"有了水泥車，才蓋得出我們住的房子",
+      stop:30,
+      jobMs:9200,
+      jobSound:function(){
+        engineRumble(); LAND.forEach(gravel);
+        thud(4.6); thud(5.1); thud(5.6);
+      },
+      fly:[
+        { sel:".rock",  via:".worker .hand-port", target:".load-port", step:1.2,  first:0.3 },
+        { sel:".crete", target:".site-port",      step:0.45, first:3.2 }
+      ],
       props:
-        prop("pile", 15, 28, 22,
+        prop("pile", 3, 28, 20,
           '<svg viewBox="0 0 140 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
           '<path class="pile-body" d="M4 52 Q34 10 70 20 Q104 8 136 52 Z" fill="#A8916F"/>' +
           '<path class="pile-body" d="M20 52 Q44 28 70 34 Q98 26 120 52 Z" fill="#8E7856"/>' +
           '</svg>') +
-        prop("rock r1", 20, 40, 4.6, rock("#B9A484")) +
-        prop("rock r2", 26, 43, 5.0, rock("#A8916F")) +
-        prop("rock r3", 32, 40, 4.4, rock("#C0AB8A")),
+        prop("rock r1", 7, 40, 4.6, rock("#B9A484")) +
+        prop("rock r2", 12, 43, 5.0, rock("#A8916F")) +
+        prop("rock r3", 17, 40, 4.4, rock("#C0AB8A")) +
+        prop("worker", 24, 28, 5.6, worker("#E86A1F")) +
+        // 水泥。一開始藏在車身後面，倒出來才看得到，像是從車上送出去的。
+        prop("crete c1", 44, 42, 4.2, rock("#9C9082")) +
+        prop("crete c2", 49, 45, 4.6, rock("#8A7F70")) +
+        prop("crete c3", 54, 42, 4.0, rock("#A8A096")) +
+        // 工地：水泥一到，房子就一層一層長出來
+        prop("site", 74, 100, 24,
+          '<svg viewBox="0 0 120 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+          '<rect x="2" y="102" width="116" height="8" rx="3" fill="#A89880"/>' +
+          '<rect class="build b1" x="10" y="92" width="100" height="11" rx="2" fill="#B9BFC4"/>' +
+          '<rect class="build b2" x="16" y="46" width="88" height="47" fill="#F0E4D2"/>' +
+          '<path class="build b3" d="M4 49 L60 13 L116 49 Z" fill="#C0603F"/>' +
+          '<g class="build b4">' +
+          '<rect x="50" y="66" width="20" height="27" rx="2" fill="#8A6A4F"/>' +
+          '<rect x="24" y="56" width="18" height="16" rx="2" fill="#BFE3F2"/>' +
+          '<rect x="78" y="56" width="18" height="16" rx="2" fill="#BFE3F2"/>' +
+          '</g>' +
+          '<rect class="site-port" x="38" y="86" width="44" height="16" fill="none" pointer-events="none"/>' +
+          '</svg>') +
+        prop("kid", 70, 30, 4.4, kid("#2F7FD1")),
       svg: '<svg viewBox="0 0 380 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="水泥車">' +
         '<g class="body">' +
         '<rect x="76" y="106" width="248" height="20" rx="5" fill="#535E6A"/>' +
@@ -337,6 +406,7 @@
       id:"fire", name:"消防車", tint:"#E03131", track:"road",
       sound:siren,
       job:"房子失火了，消防車噴水把火滅掉",
+      thanks:"消防員把火滅掉，大家就安全了",
       stop:18,
       jobSound:function(){ siren(); waterSpray(); },
       fly:[],
@@ -351,6 +421,11 @@
           '<circle class="bpuff k3" cx="59" cy="-14" r="9" fill="#B7BFC3"/>' +
           '</g>' +
           // 澆熄的瞬間冒出的白色水蒸氣
+          '<g class="splash">' +
+          '<circle class="sp s1" cx="44" cy="10" r="9" fill="#BFE3F2"/>' +
+          '<circle class="sp s2" cx="74" cy="4" r="7" fill="#DCF0F8"/>' +
+          '<circle class="sp s3" cx="58" cy="-6" r="8" fill="#A8DCF0"/>' +
+          '</g>' +
           '<g class="steam">' +
           '<circle class="spuff m1" cx="46" cy="18" r="15" fill="#E4EAED"/>' +
           '<circle class="spuff m2" cx="70" cy="14" r="13" fill="#EEF3F5"/>' +
@@ -373,7 +448,8 @@
           '<rect class="glow" x="76" y="64" width="16" height="14" rx="2" fill="#F2B01E"/>' +
           '<rect class="cool" x="28" y="64" width="16" height="14" rx="2" fill="#BFE3F2"/>' +
           '<rect class="cool" x="76" y="64" width="16" height="14" rx="2" fill="#BFE3F2"/>' +
-          '</svg>'),
+          '</svg>') +
+        prop('kid', 8, 30, 4.4, kid('#3C8C3C')),
       svg: '<svg viewBox="0 0 380 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="消防車">' +
         '<g class="body">' +
         '<rect x="78" y="58" width="256" height="68" rx="8" fill="#DC2B2B"/>' +
@@ -394,6 +470,9 @@
         '<rect x="50" y="44" width="20" height="12" rx="5" fill="#E53935" class="beacon b2"/>' +
         '<rect x="10" y="108" width="14" height="16" rx="4" fill="#5D6874"/>' +
         '<circle cx="150" cy="22" r="9" fill="#9EA7AF"/>' +
+        // 水柱本身。SVG 是翻面的，所以往 -x 畫等於畫向畫面右邊的房子。
+        '<path class="jet jet-a" d="M150 22 Q -14 -146 -200 -104" stroke="#7EC8F0" stroke-width="17" fill="none" stroke-linecap="round"/>' +
+        '<path class="jet jet-b" d="M150 26 Q -10 -132 -194 -94" stroke="#CDEBFA" stroke-width="8" fill="none" stroke-linecap="round"/>' +
         '<g class="spray"><circle cx="158" cy="20" r="9" fill="#7EC8F0" opacity=".9"/></g>' +
         '<g class="spray s2"><circle cx="158" cy="24" r="6" fill="#A8DCF0" opacity=".9"/></g>' +
         '<g class="spray s3"><circle cx="158" cy="17" r="7" fill="#5FB8E6" opacity=".9"/></g>' +
@@ -408,10 +487,12 @@
       /* 貨物本來藏在車廂後面（被車身擋住），工作時才一箱一箱搬出來送進店門。 */
       id:"truck", name:"卡車", tint:"#2F7FD1", track:"road",
       sound:truckHorn,
-      job:"卡車把車上的貨物一箱一箱搬進店裡",
+      job:"卡車把貨物搬下來，一箱一箱交給店員",
+      thanks:"卡車送貨來，店裡才有東西可以買",
+      jobMs:7600,
       stop:16,
       jobSound:function(){ truckHorn(); LAND.forEach(thud); },
-      fly:[{sel:".box", target:".door-port"}],
+      fly:[{sel:".box", via:".worker .hand-port", target:".clerk .hand-port", step:1.2, first:0.3}],
       props:
         prop("shop", 74, 100, 22,
           '<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
@@ -431,11 +512,12 @@
           '</g>' +
           '</svg>') +
         // 店門口：貨物飛過去的落點，本身看不見
-        '<div class="prop door-port" style="left:84%;bottom:100%;width:3%;height:14%"></div>' +
-        prop("worker", 64, 30, 3.6, worker("#2F7FD1")) +
-        prop("box x1", 30, 30, 5.5, BOX) +
-        prop("box x2", 35, 30, 5.5, BOX) +
-        prop("box x3", 40, 30, 5.5, BOX),
+        prop("clerk", 78, 100, 5.4, clerk("#3C8C3C")) +
+        prop("worker", 60, 30, 5.6, worker("#2F7FD1")) +
+        prop("box x1", 28, 30, 5.5, BOX) +
+        prop("box x2", 34, 30, 5.5, BOX) +
+        prop("box x3", 40, 30, 5.5, BOX) +
+        prop("kid", 6, 30, 4.4, kid("#7A4FA8")),
       svg: '<svg viewBox="0 0 380 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="卡車">' +
         '<g class="body">' +
         '<rect x="112" y="40" width="226" height="86" rx="6" fill="#EDF2F6"/>' +
@@ -460,6 +542,8 @@
       id:"thsr", name:"高鐵", tint:"#F26A21", track:"viaduct",
       sound:whoosh,
       job:"乘客走進車廂坐好，高鐵載大家去很遠的地方",
+      thanks:"搭高鐵，就能去看住在遠方的家人",
+      jobMs:6600,
       stop:14,
       jobSound:function(){ dingDing(); whoosh(); },
       fly:[{sel:".pax-in", target:".load-port"}],
@@ -467,7 +551,8 @@
         prop("deck", 76, 46, 20, DECK) +
         prop("pax-in w1", 79, 52, 2.6, personSvg("#E0653F")) +
         prop("pax-in w2", 84, 52, 2.6, personSvg("#2F7FD1")) +
-        prop("pax-in w3", 89, 52, 2.6, personSvg("#7A4FA8")),
+        prop("pax-in w3", 89, 52, 2.6, personSvg("#7A4FA8")) +
+        prop("kid", 93, 52, 2.8, kid("#3C8C3C")),
       svg: '<svg viewBox="0 0 520 140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="高鐵">' +
         '<g class="body">' +
         '<path d="M14 104 Q60 40 168 34 L470 34 Q498 34 498 58 L498 104 Z" fill="#FAFCFD"/>' +
@@ -487,6 +572,10 @@
         '<rect x="330" y="14" width="70" height="8" rx="4" fill="#7C8892"/>' +
         '<path d="M352 34 L340 16 M378 34 L392 16" stroke="#7C8892" stroke-width="5" fill="none"/>' +
         '<rect x="16" y="104" width="482" height="10" rx="3" fill="#5D6874"/>' +
+        '<g class="door-set">' +
+        '<rect class="door-l" x="150" y="40" width="27" height="52" rx="3" fill="#3A4650"/>' +
+        '<rect class="door-r" x="177" y="40" width="27" height="52" rx="3" fill="#3A4650"/>' +
+        '</g>' +
         loadPort(152, 52, 56, 24) +
         '</g>' +
         railWheel(120,122,12) + railWheel(260,122,12) + railWheel(410,122,12) +
@@ -496,6 +585,8 @@
       id:"lrt", name:"輕軌", tint:"#00A167", track:"grass",
       sound:dingDing,
       job:"輕軌到站開門，大家走進車廂坐好囉",
+      thanks:"輕軌每天載大家上學、上班",
+      jobMs:6400,
       stop:22,
       jobSound:function(){ dingDing(); },
       fly:[{sel:".pax-in", target:".load-port"}],
@@ -503,7 +594,8 @@
         prop("deck", 72, 30, 20, DECK) +
         prop("pax-in w1", 75, 36, 2.8, personSvg("#E0653F")) +
         prop("pax-in w2", 80, 36, 2.8, personSvg("#2F7FD1")) +
-        prop("pax-in w3", 85, 36, 2.8, personSvg("#7A4FA8")),
+        prop("pax-in w3", 85, 36, 2.8, personSvg("#7A4FA8")) +
+        prop("kid", 89, 36, 3.0, kid("#E0653F")),
       svg: '<svg viewBox="0 0 440 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="輕軌">' +
         '<g class="body">' +
         '<path d="M12 112 Q12 36 56 34 L398 34 Q426 34 426 62 L426 112 Z" fill="#FBFDFD"/>' +
@@ -588,16 +680,27 @@
      這樣不管螢幕多寬，東西都會正好落進車子裡，而不是半路消失。 */
   function aimFlights(v){
     (v.fly || []).forEach(function(f){
-      var target = rider.querySelector(f.target) || propsEl.querySelector(f.target);
-      if(!target) return;
-      var t = target.getBoundingClientRect();
-      var tx = t.left + t.width / 2;
-      var ty = t.top + t.height / 2;
-      Array.prototype.forEach.call(propsEl.querySelectorAll(f.sel), function(el, i){
+      function find(sel){ return sel && (rider.querySelector(sel) || propsEl.querySelector(sel)); }
+      function centre(el){
         var r = el.getBoundingClientRect();
-        el.style.setProperty("--dx", (tx - (r.left + r.width / 2)) + "px");
-        el.style.setProperty("--dy", (ty - (r.top + r.height / 2)) + "px");
-        el.style.setProperty("--fly-delay", (0.35 + i * 0.45) + "s");
+        return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+      }
+      var target = find(f.target);
+      if(!target) return;
+      var t = centre(target);
+      var handEl = find(f.via);
+      var hand = handEl ? centre(handEl) : null;
+      var first = f.first == null ? 0.35 : f.first;
+      var step  = f.step  == null ? 0.45 : f.step;
+      Array.prototype.forEach.call(propsEl.querySelectorAll(f.sel), function(el, i){
+        var o = centre(el);
+        el.style.setProperty('--dx', (t.x - o.x) + 'px');
+        el.style.setProperty('--dy', (t.y - o.y) + 'px');
+        if(hand){
+          el.style.setProperty('--hx', (hand.x - o.x) + 'px');
+          el.style.setProperty('--hy', (hand.y - o.y) + 'px');
+        }
+        el.style.setProperty('--fly-delay', (first + i * step) + 's');
       });
     });
   }
@@ -606,6 +709,8 @@
     Array.prototype.forEach.call(propsEl.querySelectorAll(".prop"), function(el){
       el.style.removeProperty("--dx");
       el.style.removeProperty("--dy");
+      el.style.removeProperty("--hx");
+      el.style.removeProperty("--hy");
       el.style.removeProperty("--fly-delay");
     });
   }
@@ -641,38 +746,53 @@
 
     var v = current;
     var parked = v.stop;
+    var jobMs = v.jobMs || 5900;
 
-    // 1. 滑到工作現場
+    // 1. 減速滑進工作現場（高鐵是進站，所以要看得出來在慢下來）
     freezeAt(leftPercentNow());
-    rider.style.transition = "left .9s cubic-bezier(.32,.72,.3,1)";
-    rider.style.left = parked + "%";
+    rider.style.transition = 'left 1.2s cubic-bezier(.18,.7,.25,1)';
+    rider.style.left = parked + '%';
 
-    // 2. 停好才量距離，落點才會準
+    // 2. 停好才量距離，東西的落點才會準
     later(function(){
       aimFlights(v);
-      propsEl.classList.add("working");
-      rider.classList.add("acting");
+      propsEl.classList.add('working');
+      rider.classList.add('acting');
       caption.textContent = v.job;
-      caption.classList.add("on");
+      caption.classList.add('on');
       v.jobSound();
       say(v.job);
-    }, 950);
+    }, 1250);
 
-    // 3. 東西都到位了：車斗堆高 / 滾筒裝滿 / 車窗坐滿乘客 / 店裡上架
+    // 3. 東西都到位了：車斗堆滿 / 滾筒裝滿 / 車窗坐滿乘客 / 店裡上架
     later(function(){
-      rider.classList.add("loaded");
-      propsEl.classList.add("done");
-    }, 3050);
+      rider.classList.add('loaded');
+      propsEl.classList.add('done');
+      // 第二句：這件事跟大家的生活有什麼關係。同時大家互相揮手。
+      if(v.thanks){
+        caption.textContent = v.thanks;
+        say(v.thanks);
+      }
+    }, Math.max(1600, jobMs - 2400));
 
-    // 4. 收工，一切復原，可以再玩一次
+    // 4. 收工：關門、現場復原，然後加速開走
     later(function(){
-      caption.classList.remove("on");
-      rider.classList.remove("acting", "loaded");
-      propsEl.className = "props";
+      caption.classList.remove('on');
+      rider.classList.remove('acting', 'loaded');
+      propsEl.className = 'props';
       clearFlights();
-      driveFrom(parked);
-      busy = false;
-    }, 5900);
+
+      var away = Math.min(parked + 34, 104);
+      rider.style.transition = 'left 1.8s cubic-bezier(.5,0,.85,.55)';
+      rider.style.left = away + '%';
+      byeChime();
+
+      // 加速完才交回等速的循環動畫，速度銜接得上才不會跳
+      later(function(){
+        driveFrom(away);
+        busy = false;
+      }, 1820);
+    }, jobMs);
   }
 
   VEHICLES.forEach(function(v, i){
