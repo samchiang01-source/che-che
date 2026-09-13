@@ -65,28 +65,28 @@ node tools/make-icons.mjs
 
 ## 部署
 
-同一份 `docs/` 同時發到兩個地方，內容一樣，兩個網址都能用。
+同一份 `docs/` 同時發到兩個地方，內容一樣，兩個網址都能用。**兩邊都是推上 `main` 就自動更新，這個 repo 裡沒有任何 CI 設定檔**——兩個平台各自去拉 GitHub。
 
-| 平台 | 網址 | 怎麼觸發 |
+| 平台 | 網址 | 誰負責部署 |
 |---|---|---|
-| GitHub Pages | <https://samchiang01-source.github.io/che-che/> | GitHub 內建，推 `main` 就重建 |
-| Cloudflare | <https://che-che.samchiang01.workers.dev/> | GitHub Actions 呼叫 wrangler |
-
-GitHub Pages 的來源設在 repo Settings → Pages，指向 `main` 分支的 `/docs`，不需要 workflow。
+| GitHub Pages | <https://samchiang01-source.github.io/che-che/> | GitHub 內建，來源是 `main` 分支的 `/docs` |
+| Cloudflare | <https://che-che.samchiang01.workers.dev/> | Cloudflare Workers Builds，直接連著這個 repo |
 
 ### Cloudflare
 
 Cloudflare 已經把 Pages 併進 Workers，所以這個專案是 Workers 型態的靜態站：設定在 `wrangler.jsonc`，部署指令是 `wrangler deploy`（不是舊的 `wrangler pages deploy`）。
 
-手動部署一次：
+自動部署走 Cloudflare 自己的 Git 整合（Workers Builds），設定在 Cloudflare 後台的 `che-che` Worker → Settings → Build：
+
+| 欄位 | 值 |
+|---|---|
+| Repository | `samchiang01-source/che-che` |
+| Branch | `main` |
+| Build command | 留空（這個站沒有建置步驟） |
+| Deploy command | `npx wrangler deploy` |
+
+這樣不需要在 GitHub 放任何 API token。要手動部署一次的話：
 
 ```bash
 npx wrangler deploy
 ```
-
-自動部署由 `.github/workflows/cloudflare.yml` 負責，需要 repo 的兩個 Actions secret：
-
-- `CLOUDFLARE_ACCOUNT_ID`
-- `CLOUDFLARE_API_TOKEN` — 在 Cloudflare 建 API token，權限要包含 **Workers Scripts: Edit**
-
-兩個都設好之後，每次推 `main` 就會自動部署，也可以在 Actions 分頁手動觸發。
