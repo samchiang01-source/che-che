@@ -145,14 +145,17 @@
 
 .spray,.notes{opacity:0}
 .spray{transform-box:fill-box; transform-origin:0 50%}
-.rider.acting .spray{animation:spray 1.3s ease-out}
+.rider.acting .spray{animation:spray 1.5s ease-out infinite}
 @keyframes spray{
   0%{opacity:0; transform:translate(0,0) scale(.3)}
   25%{opacity:1}
-  100%{opacity:0; transform:translate(-76px,-46px) scale(1.5)}
+  100%{opacity:0; transform:translate(-345px,-72px) scale(1.9)}
 }
 .spray.s2{animation-delay:.16s}
 .spray.s3{animation-delay:.32s}
+.spray.s4{animation-delay:.48s}
+.spray.s5{animation-delay:.64s}
+.spray.s6{animation-delay:.8s}
 
 .notes{transform-box:fill-box}
 .rider.acting .notes{animation:notes 1.9s ease-out}
@@ -238,8 +241,11 @@
   .wheel,.drum,.beacon{animation:none}
 }
 
+
 /* ---------- 工作現場的道具 ---------- */
-/* 道具跟車子共用 .lane 的座標系，bottom 可以超過 100% 跑到路面上方 */
+/* 道具跟車子共用 .lane 的座標系，bottom 可以超過 100% 跑到路面上方。
+   .props 排在 .rider 前面，所以東西飛近車子時會被車身擋住，
+   看起來就真的是「進到車子裡面」了。 */
 .props{
   position:absolute; inset:0;
   pointer-events:none;
@@ -248,72 +254,121 @@
 .prop{position:absolute}
 .prop svg{display:block; width:100%; height:auto; overflow:visible}
 
-/* 垃圾袋：被吸進垃圾車 */
-.bag{transform-origin:50% 100%}
-.props.working .bag{animation:suck .85s cubic-bezier(.5,-0.2,.8,.6) forwards}
-.props.working .b2{animation-delay:.22s}
-.props.working .b3{animation-delay:.44s}
-@keyframes suck{
+/* ---------- 東西飛進車裡 ---------- */
+/* --dx / --dy 是 JS 在車子停好之後量出來的實際距離，
+   所以不管螢幕多寬，東西都會正好落進車斗，而不是半路消失。 */
+.props.working .bag,
+.props.working .rock,
+.props.working .box{
+  animation:toss .8s cubic-bezier(.35,-0.15,.7,.65) var(--fly-delay,0s) forwards;
+}
+@keyframes toss{
   0%{transform:translate(0,0) scale(1) rotate(0deg); opacity:1}
-  60%{transform:translate(-60%,-40%) scale(.8) rotate(-25deg); opacity:1}
-  100%{transform:translate(-160%,-10%) scale(0) rotate(-70deg); opacity:0}
+  55%{transform:translate(calc(var(--dx,0px) * .55), calc(var(--dy,0px) * .55 - 30px)) scale(.95) rotate(-20deg); opacity:1}
+  100%{transform:translate(var(--dx,0px), var(--dy,0px)) scale(.4) rotate(-45deg); opacity:0}
 }
 
-/* 工地：泥土地變成鋪平的水泥 */
-.site .slab{opacity:0}
-.props.working .site .dirt{animation:fade-out 1.1s ease .7s forwards}
-.props.working .site .slab{animation:fade-in 1.1s ease .7s forwards}
-@keyframes fade-out{to{opacity:0}}
-@keyframes fade-in{to{opacity:1}}
-
-
-/* 房子：火在燒，被噴水之後熄掉並冒煙 */
-.flame{transform-box:fill-box; transform-origin:50% 100%; animation:flicker .42s ease-in-out infinite alternate}
-.f2{animation-delay:-.2s}
-.f3{animation-delay:-.31s}
-@keyframes flicker{
-  from{transform:scale(1) translateY(0)}
-  to{transform:scale(1.18) translateY(-3px)}
+/* 乘客是用走的，不是被丟的 */
+.props.working .pax-in{
+  animation:board .9s ease-in var(--fly-delay,0s) forwards;
 }
-.props.working .flames{animation:douse 1.5s ease-in .5s forwards}
-@keyframes douse{
-  0%{opacity:1; transform:scale(1)}
-  70%{opacity:.55; transform:scale(.45)}
-  100%{opacity:0; transform:scale(0)}
-}
-.flames{transform-box:fill-box; transform-origin:50% 100%}
-
-.puff{opacity:0; transform-box:fill-box; transform-origin:50% 50%}
-.props.working .puff{animation:puff 2s ease-out 1.4s forwards}
-.props.working .puff.p2{animation-delay:1.7s}
-.props.working .puff.p3{animation-delay:2s}
-@keyframes puff{
-  0%{opacity:0; transform:translateY(0) scale(.4)}
-  30%{opacity:.85}
-  100%{opacity:0; transform:translateY(-46px) scale(1.5)}
-}
-
-/* 紙箱：被送進店裡 */
-.props.working .box{animation:deliver 1.1s cubic-bezier(.4,0,.5,1) .5s forwards}
-.props.working .x2{animation-delay:.85s}
-@keyframes deliver{
-  0%{transform:translate(0,0); opacity:1}
-  45%{transform:translate(120%,-70%); opacity:1}
-  100%{transform:translate(240%,0); opacity:0}
-}
-
-/* 月台上的乘客：上車 */
-.person{transform-box:fill-box; transform-origin:50% 100%}
-.props.working .person{animation:board 1s ease-in .6s forwards}
-.props.working .person.p2{animation-delay:.9s}
-.props.working .person.p3{animation-delay:1.2s}
 @keyframes board{
-  0%{transform:translateX(0) scale(1); opacity:1}
-  100%{transform:translateX(-60px) scale(.7); opacity:0}
+  0%{transform:translate(0,0) scale(1); opacity:1}
+  70%{opacity:1}
+  100%{transform:translate(var(--dx,0px), var(--dy,0px)) scale(.6); opacity:0}
 }
+
+/* 在旁邊把東西丟上車的人：手臂往上甩三次，跟三件東西對得上 */
+.arm{transform-box:fill-box; transform-origin:50% 8%}
+.props.working .worker .arm{animation:throw .45s ease-in-out .25s 3}
+@keyframes throw{
+  0%,100%{transform:rotate(0deg)}
+  45%{transform:rotate(-115deg)}
+}
+
+/* 砂石堆被鏟走之後矮一截 */
+.pile-body{transform-box:fill-box; transform-origin:50% 100%}
+.props.working .pile-body{animation:shrink 1.8s ease .5s forwards}
+@keyframes shrink{to{transform:scaleY(.3); opacity:.8}}
+
+/* ---------- 車子「載到了」的樣子 ---------- */
+/* 這是整個互動的重點：東西進去之後，車子本身要看得出來不一樣。 */
+.fill-load{transform-box:fill-box; transform-origin:50% 100%; transform:scaleY(0)}
+.rider.loaded .fill-load{animation:fill-up .9s cubic-bezier(.3,1.3,.5,1) forwards}
+@keyframes fill-up{to{transform:scaleY(1)}}
+
+/* 裝滿砂石之後滾筒轉得更起勁 */
+.rider.acting .drum{animation-duration:1.1s}
+
+/* 車窗裡的乘客，一個一個坐好 */
+.pax{opacity:0; transform-box:fill-box; transform-origin:50% 100%}
+.rider.loaded .pax{animation:sit .45s ease forwards}
+.rider.loaded .pax2{animation-delay:.1s}
+.rider.loaded .pax3{animation-delay:.2s}
+.rider.loaded .pax4{animation-delay:.3s}
+.rider.loaded .pax5{animation-delay:.4s}
+.rider.loaded .pax6{animation-delay:.5s}
+@keyframes sit{
+  0%{opacity:0; transform:translateY(8px) scale(.5)}
+  100%{opacity:1; transform:translateY(0) scale(1)}
+}
+
+/* 貨送到了，店裡櫥窗才有東西 */
+.stock{opacity:0}
+.props.done .stock{animation:appear .5s ease forwards}
+@keyframes appear{to{opacity:1}}
+
+/* ---------- 失火的房子：大火、黑煙、澆熄後的白色水蒸氣 ---------- */
+.flames{transform-box:fill-box; transform-origin:50% 100%}
+.flame{transform-box:fill-box; transform-origin:50% 100%; animation:flicker .38s ease-in-out infinite alternate}
+.f2{animation-delay:-.19s}
+.f3{animation-delay:-.27s}
+.f4{animation-delay:-.11s}
+@keyframes flicker{
+  from{transform:scale(1,1) translateY(0)}
+  to{transform:scale(1.12,1.24) translateY(-4px)}
+}
+
+/* 燒著的時候一直往上冒的黑煙 */
+.bpuff{transform-box:fill-box; transform-origin:50% 100%; opacity:0; animation:rise 2.2s ease-out infinite}
+.k2{animation-delay:-.75s}
+.k3{animation-delay:-1.5s}
+@keyframes rise{
+  0%{opacity:0; transform:translateY(6px) scale(.4)}
+  25%{opacity:.75}
+  100%{opacity:0; transform:translateY(-62px) scale(1.6)}
+}
+
+/* 噴到水之後：火一段一段變小，最後整個熄掉 */
+.props.working .flames{animation:douse 1.7s cubic-bezier(.5,0,.7,1) .7s forwards}
+@keyframes douse{
+  0%{opacity:1; transform:scaleY(1)}
+  35%{opacity:1; transform:scaleY(.62)}
+  70%{opacity:.85; transform:scaleY(.28)}
+  100%{opacity:0; transform:scaleY(0)}
+}
+.props.working .burn-smoke{animation:smoke-out 1s ease 2.1s forwards}
+@keyframes smoke-out{to{opacity:0}}
+
+/* 澆熄瞬間噴出的白色水蒸氣 */
+.spuff{transform-box:fill-box; transform-origin:50% 100%; opacity:0}
+.props.working .spuff{animation:steam 2.2s ease-out 1.2s forwards}
+.props.working .m2{animation-delay:1.45s}
+.props.working .m3{animation-delay:1.7s}
+.props.working .m4{animation-delay:1.95s}
+@keyframes steam{
+  0%{opacity:0; transform:translateY(10px) scale(.4)}
+  25%{opacity:.9}
+  100%{opacity:0; transform:translateY(-78px) scale(2.1)}
+}
+
+/* 火還在的時候窗戶透出橘光，滅了才變回藍玻璃 */
+.cool{opacity:0}
+.props.working .glow{animation:smoke-out 1.2s ease 1.5s forwards}
+.props.working .cool{animation:appear 1.2s ease 1.5s forwards}
 
 /* 輕軌到站開門 */
-.rider.acting .door{animation:door-open 1.4s ease .6s}
+.rider.acting .door{animation:door-open 1.6s ease .5s}
 @keyframes door-open{
   0%,100%{opacity:1}
   25%,75%{opacity:.25}
@@ -344,15 +399,16 @@
   transform:translate(-50%,0);
 }
 
-@media (prefers-reduced-motion:reduce){
-  .flame{animation:none}
-  .props.working .bag,
-  .props.working .box,
-  .props.working .person{animation-duration:.01s}
-}
-
-/* 車子的圖都是車頭朝左畫的，統一翻面，讓車頭朝向前進的方向。
-   翻面之後車尾在左邊，所以工作現場也都擺在車子左側，
-   剛好對上真車的樣子：垃圾車後方上料、水泥車後方出料、卡車後方卸貨。 */
+/* 車子的圖都是車頭朝左畫的，統一翻面，讓車頭朝向前進的方向。 */
 .rider svg,
 .pick svg{transform:scaleX(-1)}
+
+@media (prefers-reduced-motion:reduce){
+  .rider{animation:none}
+  .cloud{animation:none}
+  .wheel,.drum,.beacon,.flame{animation:none}
+  .props.working .bag,
+  .props.working .rock,
+  .props.working .box,
+  .props.working .pax-in{animation-duration:.2s}
+}
