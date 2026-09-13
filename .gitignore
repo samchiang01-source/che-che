@@ -1,0 +1,6 @@
+# 這個專案沒有建置步驟，理論上不該出現這些，但擋著比較保險
+node_modules/
+.wrangler/
+.DS_Store
+Thumbs.db
+*.log

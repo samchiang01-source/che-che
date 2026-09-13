@@ -1,0 +1,3 @@
+# repo 裡一律存 LF，Windows 上簽出時再交給 core.autocrlf 處理
+* text=auto eol=lf
+*.png binary

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>車車出動</title>
+<meta name="description" content="給 3 歲小孩的車車互動頁：垃圾車、水泥車、消防車、卡車、高鐵、輕軌，點一下就出動並發出聲音。">
+
+<meta name="theme-color" content="#A8DCF0">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="車車出動">
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="車車出動">
+<meta property="og:description" content="垃圾車、水泥車、消防車、卡車、高鐵、輕軌，點一下就出動。給 3 歲小孩玩的。">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Noto+Sans+TC:wght@500;900&display=swap">
+
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/play.css">
+</head>
+<body>
+
+<div class="app">
+  <div class="scene" id="scene" data-track="road">
+    <div class="sun"></div>
+    <div class="cloud c1"></div>
+    <div class="cloud c2"></div>
+    <div class="cloud c3"></div>
+    <div class="hills"></div>
+    <div class="ground"></div>
+    <div class="piers"></div>
+    <div class="track"></div>
+    <div class="lane">
+      <button class="rider" id="rider" type="button" aria-label="車子"></button>
+    </div>
+    <button class="mute" id="mute" type="button" aria-label="靜音" aria-pressed="false">🔊</button>
+  </div>
+
+  <div class="garage">
+    <div class="grid" id="grid"></div>
+    <p class="hint">
+      點下面的車車叫它出來，再<b>點畫面上的車車</b>會有特別的動作和聲音。右上角 🔊 可以關掉聲音。
+      <br>
+      <a href="guide.html">給家長：3 歲小孩的網站內容怎麼挑</a>
+    </p>
+  </div>
+</div>
+
+<script src="assets/play.js" defer></script>
+</body>
+</html>

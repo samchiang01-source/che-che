@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="垃圾車">
+  <rect width="512" height="512" fill="#BFE3F2"/>
+  <rect y="379" width="512" height="133" fill="#4C525C"/>
+  <g fill="#F3D34A">
+    <rect x="31" y="453" width="72" height="11" rx="5"/>
+    <rect x="164" y="453" width="72" height="11" rx="5"/>
+    <rect x="297" y="453" width="72" height="11" rx="5"/>
+    <rect x="430" y="453" width="72" height="11" rx="5"/>
+  </g>
+  <rect x="143" y="184" width="236" height="154" rx="10" fill="#EFC81C"/>
+  <rect x="369" y="154" width="92" height="184" rx="10" fill="#D3AE10"/>
+  <rect x="51" y="205" width="103" height="133" rx="13" fill="#F5D430"/>
+  <rect x="69" y="223" width="67" height="56" rx="8" fill="#DCF0F8"/>
+  <rect x="174" y="284" width="154" height="33" rx="6" fill="#3C8C3C"/>
+  <g fill="#2B3138">
+    <circle cx="154" cy="361" r="44"/>
+    <circle cx="317" cy="361" r="44"/>
+    <circle cx="410" cy="361" r="44"/>
+  </g>
+  <g fill="#D6DEE4">
+    <circle cx="154" cy="361" r="18"/>
+    <circle cx="317" cy="361" r="18"/>
+    <circle cx="410" cy="361" r="18"/>
+  </g>
+</svg>

@@ -1,0 +1,239 @@
+/* 車車出動 — 互動場景 */
+
+.app{
+  display:flex;
+  flex-direction:column;
+  min-height:100svh;
+}
+
+/* ---------- 場景 ---------- */
+.scene{
+  position:relative;
+  flex:1 1 auto;
+  min-height:250px;
+  overflow:hidden;
+  background:linear-gradient(180deg,var(--sky-top) 0%,var(--sky-bot) 78%);
+  isolation:isolate;
+}
+
+.sun{
+  position:absolute; top:5%; right:7%;
+  width:clamp(52px,9vw,92px); aspect-ratio:1;
+  border-radius:50%;
+  background:var(--sun);
+  box-shadow:0 0 0 10px rgba(255,212,71,.28), 0 0 0 22px rgba(255,212,71,.14);
+}
+
+.cloud{
+  position:absolute;
+  height:26px; width:88px;
+  background:#FFFFFF;
+  border-radius:99px;
+  opacity:.92;
+  animation:float 44s linear infinite;
+}
+.cloud::before,.cloud::after{
+  content:""; position:absolute; background:#FFFFFF; border-radius:50%;
+}
+.cloud::before{width:40px;height:40px;left:14px;top:-17px}
+.cloud::after{width:30px;height:30px;left:48px;top:-12px}
+.cloud.c1{top:14%; left:6%;  transform:scale(1)}
+.cloud.c2{top:26%; left:46%; transform:scale(.72); animation-duration:62s; animation-delay:-20s}
+.cloud.c3{top:8%;  left:72%; transform:scale(.85); animation-duration:54s; animation-delay:-38s}
+@keyframes float{from{margin-left:-30vw}to{margin-left:110vw}}
+
+.hills{
+  position:absolute; left:0; right:0; bottom:29%;
+  height:16%;
+  background:
+    radial-gradient(42% 100% at 16% 100%, var(--grass-dk) 0 99%, transparent 100%),
+    radial-gradient(34% 78% at 48% 100%, var(--grass-dk) 0 99%, transparent 100%),
+    radial-gradient(46% 92% at 84% 100%, var(--grass-dk) 0 99%, transparent 100%);
+  opacity:.5;
+}
+
+.ground{
+  position:absolute; left:0; right:0; bottom:0;
+  height:30%;
+  background:var(--grass);
+  border-top:4px solid var(--grass-dk);
+}
+
+/* 車子行駛的路面，會依車種改變 */
+.track{
+  position:absolute; left:0; right:0; bottom:0;
+  height:22%;
+  background:var(--road);
+  border-top:5px solid var(--road-dk);
+}
+.track::after{
+  content:""; position:absolute; left:0; right:0; top:50%;
+  height:5px; transform:translateY(-50%);
+  background:repeating-linear-gradient(90deg,var(--road-line) 0 46px,transparent 46px 92px);
+  border-radius:3px;
+}
+
+/* 高鐵：高架橋 */
+.scene[data-track="viaduct"] .track{
+  background:#C2C7C9;
+  border-top:5px solid #9EA6A9;
+  height:20%;
+}
+.scene[data-track="viaduct"] .track::after{
+  top:auto; bottom:0; height:36%; transform:none;
+  background:linear-gradient(180deg,#AAB1B4 0 100%);
+  border-radius:0;
+}
+.piers{display:none}
+.scene[data-track="viaduct"] .piers{
+  display:block;
+  position:absolute; left:0; right:0; bottom:0; height:20%;
+  background:repeating-linear-gradient(90deg,transparent 0 120px,#B4BABD 120px 168px,transparent 168px 288px);
+  opacity:.85;
+}
+
+/* 輕軌：草坪軌道（高雄輕軌的招牌） */
+.scene[data-track="grass"] .track{
+  background:var(--grass-dk);
+  border-top:5px solid #467A26;
+}
+.scene[data-track="grass"] .track::after{
+  top:52%; height:32%; transform:translateY(-50%); border-radius:0;
+  background:linear-gradient(180deg,transparent 0 26%,#9AA3A8 26% 36%,transparent 36% 64%,#9AA3A8 64% 74%,transparent 74% 100%);
+}
+
+/* ---------- 行駛中的車 ---------- */
+.lane{
+  position:absolute; left:0; right:0; bottom:0;
+  height:22%;
+}
+
+.rider{
+  position:absolute;
+  left:0;
+  bottom:14%;
+  width:clamp(190px,46%,430px);
+  padding:0; border:0; background:transparent;
+  cursor:pointer;
+  animation:drive 9s linear -3.5s infinite;
+  touch-action:manipulation;
+}
+.scene[data-track="viaduct"] .rider{bottom:32%; width:clamp(230px,62%,620px)}
+.scene[data-track="grass"] .rider{bottom:22%}
+
+@keyframes drive{
+  from{left:-52%}
+  to{left:106%}
+}
+
+.rider svg{display:block; width:100%; height:auto; overflow:visible}
+
+.rider:focus-visible{outline:none}
+.rider:focus-visible svg{filter:drop-shadow(0 0 0 4px var(--focus))}
+
+.wheel{transform-box:fill-box; transform-origin:50% 50%; animation:spin .62s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.drum{transform-box:fill-box; transform-origin:50% 50%; animation:spin 3.4s linear infinite}
+
+.beacon{animation:blink .7s steps(1,end) infinite}
+.beacon.b2{animation-delay:.35s}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:.12}}
+
+.rider.acting .body{animation:hop .42s ease-in-out 3}
+@keyframes hop{0%,100%{transform:translateY(0)}45%{transform:translateY(-9px)}}
+
+.spray,.notes{opacity:0}
+.spray{transform-box:fill-box; transform-origin:0 50%}
+.rider.acting .spray{animation:spray 1.3s ease-out}
+@keyframes spray{
+  0%{opacity:0; transform:translate(0,0) scale(.3)}
+  25%{opacity:1}
+  100%{opacity:0; transform:translate(76px,-46px) scale(1.5)}
+}
+.spray.s2{animation-delay:.16s}
+.spray.s3{animation-delay:.32s}
+
+.notes{transform-box:fill-box}
+.rider.acting .notes{animation:notes 1.9s ease-out}
+@keyframes notes{
+  0%{opacity:0; transform:translateY(0)}
+  18%{opacity:1}
+  100%{opacity:0; transform:translateY(-62px)}
+}
+.notes.n2{animation-delay:.4s}
+.notes.n3{animation-delay:.85s}
+
+/* ---------- 靜音（給家長） ---------- */
+.mute{
+  position:absolute; top:10px; right:10px;
+  width:46px; height:46px;
+  display:grid; place-items:center;
+  border-radius:14px;
+  border:2px solid var(--edge);
+  background:rgba(255,255,255,.82);
+  color:var(--ink);
+  font-size:20px; line-height:1;
+  cursor:pointer;
+}
+
+/* ---------- 車庫（選車） ---------- */
+.garage{
+  flex:0 0 auto;
+  background:var(--panel);
+  border-top:4px solid var(--edge);
+  padding:14px 12px 12px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  max-width:1080px;
+  margin:0 auto;
+}
+@media (min-width:760px){ .grid{grid-template-columns:repeat(6,1fr)} }
+
+.pick{
+  display:flex; flex-direction:column; align-items:center; justify-content:flex-end;
+  gap:6px;
+  min-height:104px;
+  padding:10px 6px 8px;
+  border:3px solid var(--edge);
+  border-radius:20px;
+  background:var(--panel-2);
+  cursor:pointer;
+  touch-action:manipulation;
+  transition:transform .12s ease, border-color .12s ease;
+}
+.pick:active{transform:scale(.95)}
+.pick[aria-pressed="true"]{border-color:var(--tint,var(--focus)); background:#FFFDF4}
+
+.pick svg{width:100%; height:auto; max-height:56px; overflow:visible}
+.pick .wheel,.pick .drum,.pick .beacon{animation:none}
+
+.pick b{
+  font-family:var(--font-zh);
+  font-weight:900;
+  font-size:clamp(15px,3.6vw,19px);
+  letter-spacing:.04em;
+  color:var(--ink);
+}
+
+.hint{
+  max-width:1080px;
+  margin:10px auto 0;
+  font-family:var(--font-zh);
+  font-size:12.5px;
+  line-height:1.6;
+  color:var(--ink-soft);
+  text-align:center;
+}
+.hint b{font-weight:900; color:var(--ink)}
+.hint a{color:var(--ink-soft); text-underline-offset:3px}
+
+@media (prefers-reduced-motion:reduce){
+  .rider{animation:none; left:26%}
+  .cloud{animation:none}
+  .wheel,.drum,.beacon{animation:none}
+}

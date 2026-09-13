@@ -1,0 +1,223 @@
+/* 給家長的內容建議頁 — 文件型排版，安靜好讀 */
+
+body{
+  font-family:var(--font-zh);
+  background:var(--panel);
+}
+
+.wrap{
+  max-width:720px;
+  margin:0 auto;
+  padding:0 20px 72px;
+}
+
+/* ---------- 頁首 ---------- */
+.top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:18px 0 26px;
+}
+
+.back{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:9px 16px 9px 12px;
+  border-radius:999px;
+  border:2px solid var(--edge);
+  background:var(--panel-2);
+  color:var(--ink);
+  font-weight:500;
+  font-size:14px;
+  text-decoration:none;
+}
+.back:hover{border-color:var(--focus)}
+.back svg{width:26px; height:auto; display:block}
+
+.top .kicker{
+  font-family:var(--font-lat);
+  font-size:11.5px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+}
+
+/* ---------- 標題 ---------- */
+.lede{
+  padding-bottom:30px;
+  border-bottom:2px solid var(--edge);
+}
+
+h1{
+  font-size:clamp(28px,6.4vw,40px);
+  font-weight:900;
+  line-height:1.25;
+  letter-spacing:.01em;
+  margin:0 0 14px;
+  text-wrap:balance;
+}
+
+.lede p{
+  margin:0;
+  font-size:16.5px;
+  line-height:1.75;
+  color:var(--ink-soft);
+  max-width:34em;
+}
+
+.lede b{color:var(--ink); font-weight:900}
+
+/* ---------- 章節 ---------- */
+h2{
+  font-size:clamp(20px,4.4vw,25px);
+  font-weight:900;
+  line-height:1.35;
+  margin:44px 0 4px;
+  text-wrap:balance;
+}
+
+.sub{
+  margin:0 0 20px;
+  font-size:14px;
+  color:var(--ink-soft);
+}
+
+/* ---------- 內容類型清單 ---------- */
+.types{
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+
+.types li{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:0 16px;
+  align-items:baseline;
+  padding:18px 0;
+  border-bottom:1px solid var(--edge);
+}
+
+.types .rank{
+  font-family:var(--font-lat);
+  font-size:15px;
+  font-weight:600;
+  font-variant-numeric:tabular-nums;
+  color:var(--ink-soft);
+  padding-top:2px;
+}
+
+.types h3{
+  grid-column:2;
+  margin:0 0 6px;
+  font-size:17.5px;
+  font-weight:900;
+}
+
+.types p{
+  grid-column:2;
+  margin:0;
+  font-size:15px;
+  line-height:1.7;
+  color:var(--ink-soft);
+}
+
+.types .why{
+  grid-column:2;
+  margin:8px 0 0;
+  font-size:13.5px;
+  line-height:1.65;
+  color:var(--ink);
+  padding-left:12px;
+  border-left:3px solid var(--sun);
+}
+
+/* ---------- 規則表 ---------- */
+.tablewrap{overflow-x:auto}
+
+table{
+  width:100%;
+  min-width:420px;
+  border-collapse:collapse;
+  font-size:14.5px;
+}
+
+th,td{
+  text-align:left;
+  padding:12px 14px 12px 0;
+  border-bottom:1px solid var(--edge);
+  vertical-align:top;
+  line-height:1.65;
+}
+
+thead th{
+  font-size:11.5px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  font-family:var(--font-lat);
+  color:var(--ink-soft);
+  font-weight:600;
+  padding-bottom:8px;
+}
+
+tbody th{
+  font-weight:900;
+  white-space:nowrap;
+  padding-right:24px;
+  width:1%;
+}
+
+/* ---------- 參考網站 ---------- */
+.sites{
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:grid;
+  gap:10px;
+}
+@media (min-width:620px){ .sites{grid-template-columns:1fr 1fr} }
+
+.sites li{
+  padding:14px 16px;
+  border:2px solid var(--edge);
+  border-radius:14px;
+  background:var(--panel-2);
+}
+
+.sites strong{display:block; font-size:15.5px; font-weight:900; margin-bottom:3px}
+.sites span{font-size:13.5px; line-height:1.6; color:var(--ink-soft)}
+
+/* ---------- 結尾 ---------- */
+.cta{
+  margin-top:48px;
+  padding:26px 24px;
+  border-radius:20px;
+  background:linear-gradient(180deg,var(--sky-top),var(--sky-bot));
+  text-align:center;
+}
+.cta p{margin:0 0 16px; font-size:15.5px; line-height:1.7; color:var(--ink)}
+.cta a{
+  display:inline-block;
+  padding:13px 26px;
+  border-radius:999px;
+  background:var(--ink);
+  color:#FFFFFF;
+  font-weight:900;
+  font-size:16px;
+  text-decoration:none;
+}
+.cta a:hover{background:#0E2430}
+
+footer{
+  margin-top:40px;
+  padding-top:18px;
+  border-top:1px solid var(--edge);
+  font-size:12.5px;
+  color:var(--ink-soft);
+  line-height:1.7;
+}

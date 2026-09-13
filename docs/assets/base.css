@@ -1,0 +1,47 @@
+/* 車車出動 — 共用基礎樣式與設計 token */
+
+:root{
+  /* 晴天實景配色：顏色主要交給車子本身，背景保持安靜 */
+  --sky-top:#A8DCF0;
+  --sky-bot:#E4F3FA;
+  --grass:#6FB23F;
+  --grass-dk:#56922F;
+  --road:#4C525C;
+  --road-dk:#3B4048;
+  --road-line:#F3D34A;
+
+  --ink:#22323D;
+  --ink-soft:#5A6E7C;
+  --panel:#EAF2F7;
+  --panel-2:#FFFFFF;
+  --edge:#CBDCE6;
+  --sun:#FFD447;
+  --focus:#0E7BC4;
+
+  --font-zh:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;
+  --font-lat:'Fredoka','Noto Sans TC','PingFang TC',sans-serif;
+
+  color-scheme:light;
+}
+
+*{box-sizing:border-box}
+
+html{-webkit-text-size-adjust:100%}
+
+body{
+  margin:0;
+  background:var(--panel);
+  color:var(--ink);
+  font-family:var(--font-lat);
+  font-size:16px;
+  line-height:1.5;
+  -webkit-tap-highlight-color:transparent;
+}
+
+img,svg{max-width:100%}
+
+[hidden]{display:none !important}
+
+a{color:var(--focus)}
+
+:focus-visible{outline:3px solid var(--focus); outline-offset:3px}
