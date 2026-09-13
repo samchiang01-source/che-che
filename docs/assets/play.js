@@ -232,8 +232,8 @@
       '<circle cx="12" cy="17" r="1.5" fill="#2B3138"/>' +
       '<circle cx="18" cy="17" r="1.5" fill="#2B3138"/>' +
       '<path d="M12 21 Q15 24 18 21" stroke="#2B3138" stroke-width="1.3" fill="none" stroke-linecap="round"/>' +
-      '<g class="arm"><rect x="22" y="27" width="6" height="19" rx="3" fill="' + vest + '"/></g>' +
-      '<rect class="hand-port" x="20" y="6" width="10" height="10" fill="none" pointer-events="none"/>' +
+      '<g class="arm"><rect x="21" y="26" width="7.5" height="21" rx="3.75" fill="' + vest + '"/></g>' +
+      '<rect class="hand-port" x="26" y="-14" width="16" height="16" fill="none" pointer-events="none"/>' +
       '</svg>';
   }
 
@@ -261,8 +261,8 @@
       '<circle cx="12" cy="17" r="1.5" fill="#2B3138"/>' +
       '<circle cx="18" cy="17" r="1.5" fill="#2B3138"/>' +
       '<path d="M12 21 Q15 24 18 21" stroke="#2B3138" stroke-width="1.3" fill="none" stroke-linecap="round"/>' +
-      '<g class="arm"><rect x="0" y="27" width="6" height="19" rx="3" fill="' + tint + '"/></g>' +
-      '<rect class="hand-port" x="-3" y="8" width="11" height="11" fill="none" pointer-events="none"/>' +
+      '<g class="arm"><rect x="1.5" y="26" width="7.5" height="21" rx="3.75" fill="' + tint + '"/></g>' +
+      '<rect class="hand-port" x="-12" y="-14" width="16" height="16" fill="none" pointer-events="none"/>' +
       '</svg>';
   }
 
@@ -363,10 +363,10 @@
         prop("site", 74, 100, 24,
           '<svg viewBox="0 0 120 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
           '<rect x="2" y="102" width="116" height="8" rx="3" fill="#A89880"/>' +
-          '<rect class="build b1" x="10" y="92" width="100" height="11" rx="2" fill="#B9BFC4"/>' +
-          '<rect class="build b2" x="16" y="46" width="88" height="47" fill="#F0E4D2"/>' +
-          '<path class="build b3" d="M4 49 L60 13 L116 49 Z" fill="#C0603F"/>' +
-          '<g class="build b4">' +
+          '<rect class="build bd1" x="10" y="92" width="100" height="11" rx="2" fill="#B9BFC4"/>' +
+          '<rect class="build bd2" x="16" y="46" width="88" height="47" fill="#F0E4D2"/>' +
+          '<path class="build bd3" d="M4 49 L60 13 L116 49 Z" fill="#C0603F"/>' +
+          '<g class="build bd4">' +
           '<rect x="50" y="66" width="20" height="27" rx="2" fill="#8A6A4F"/>' +
           '<rect x="24" y="56" width="18" height="16" rx="2" fill="#BFE3F2"/>' +
           '<rect x="78" y="56" width="18" height="16" rx="2" fill="#BFE3F2"/>' +

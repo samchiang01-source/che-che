@@ -266,12 +266,13 @@
 }
 @keyframes handoff{
   0%  {transform:translate(0,0) scale(1) rotate(0deg); opacity:1}
-  26% {transform:translate(var(--hx,0px), calc(var(--hy,0px) - 4px)) scale(.86) rotate(-10deg); opacity:1}
-  44% {transform:translate(var(--hx,0px), var(--hy,0px)) scale(.86) rotate(-6deg); opacity:1}
-  74% {transform:translate(calc(var(--hx,0px) + (var(--dx,0px) - var(--hx,0px)) * .6),
-                           calc(var(--hy,0px) + (var(--dy,0px) - var(--hy,0px)) * .6 - 26px))
-       scale(.66) rotate(-34deg); opacity:1}
-  100%{transform:translate(var(--dx,0px), var(--dy,0px)) scale(.28) rotate(-64deg); opacity:0}
+  10% {transform:translate(0,4px) scale(.95) rotate(0deg); opacity:1}
+  30% {transform:translate(var(--hx,0px), var(--hy,0px)) scale(.5) rotate(-14deg); opacity:1}
+  52% {transform:translate(var(--hx,0px), var(--hy,0px)) scale(.5) rotate(-8deg); opacity:1}
+  76% {transform:translate(calc(var(--hx,0px) + (var(--dx,0px) - var(--hx,0px)) * .55),
+                           calc(var(--hy,0px) + (var(--dy,0px) - var(--hy,0px)) * .55 - 22px))
+       scale(.44) rotate(-36deg); opacity:1}
+  100%{transform:translate(var(--dx,0px), var(--dy,0px)) scale(.22) rotate(-68deg); opacity:0}
 }
 
 /* 後備：沒有人接手時的直接拋送 */
@@ -304,6 +305,17 @@
   48% {transform:rotate(-118deg)}
   62% {transform:rotate(-96deg)}
   84%,100%{transform:rotate(0deg)}
+}
+
+/* 丟的瞬間整個人跟著使力 */
+.props.working .worker,
+.props.working .clerk{animation:heave 1.2s ease-in-out .25s 3}
+@keyframes heave{
+  0%  {transform:translateY(0) rotate(0deg)}
+  16% {transform:translateY(3px) rotate(0deg)}
+  48% {transform:translateY(-4px) rotate(-4deg)}
+  70% {transform:translateY(0) rotate(0deg)}
+  100%{transform:translateY(0) rotate(0deg)}
 }
 
 /* 砂石堆被鏟走之後矮一截 */
@@ -527,12 +539,12 @@
 /* ---------- 工地：水泥一到，房子一層一層長出來 ---------- */
 /* 這是水泥車存在的理由，所以要讓小孩看到房子真的被蓋出來 */
 .build{opacity:0}
-.b2{transform-box:fill-box; transform-origin:50% 100%}
-.b3{transform-box:fill-box}
-.props.working .b1{animation:appear .4s ease 4.0s forwards}
-.props.working .b2{animation:raise .55s cubic-bezier(.3,1.25,.5,1) 4.5s forwards}
-.props.working .b3{animation:drop .5s cubic-bezier(.3,1.35,.5,1) 5.0s forwards}
-.props.working .b4{animation:appear .4s ease 5.5s forwards}
+.bd2{transform-box:fill-box; transform-origin:50% 100%}
+.bd3{transform-box:fill-box}
+.props.working .bd1{animation:appear .4s ease 4.0s forwards}
+.props.working .bd2{animation:raise .55s cubic-bezier(.3,1.25,.5,1) 4.5s forwards}
+.props.working .bd3{animation:drop .5s cubic-bezier(.3,1.35,.5,1) 5.0s forwards}
+.props.working .bd4{animation:appear .4s ease 5.5s forwards}
 @keyframes raise{
   0%{opacity:1; transform:scaleY(0)}
   100%{opacity:1; transform:scaleY(1)}
