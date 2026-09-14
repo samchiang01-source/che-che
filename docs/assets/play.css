@@ -191,12 +191,12 @@
 
 .grid{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
+  grid-template-columns:repeat(4,1fr);
   gap:10px;
   max-width:1080px;
   margin:0 auto;
 }
-@media (min-width:760px){ .grid{grid-template-columns:repeat(6,1fr)} }
+@media (min-width:760px){ .grid{grid-template-columns:repeat(7,1fr)} }
 
 .pick{
   display:flex; flex-direction:column; align-items:center; justify-content:flex-end;
@@ -219,7 +219,7 @@
 .pick b{
   font-family:var(--font-zh);
   font-weight:900;
-  font-size:clamp(15px,3.6vw,19px);
+  font-size:clamp(13px,3.1vw,18px);
   letter-spacing:.04em;
   color:var(--ink);
 }
@@ -552,3 +552,112 @@
   0%{opacity:0; transform:translateY(-34px) scale(.9)}
   100%{opacity:1; transform:translateY(0) scale(1)}
 }
+
+/* ==================================================================
+   飛機：唯一會「換一個地方」的一台
+   ================================================================== */
+
+/* ---------- 機場跑道 ---------- */
+.scene[data-track="sky"] .track{
+  background:#4A4F57;
+  border-top:5px solid #383D44;
+  height:18%;
+}
+.scene[data-track="sky"] .track::after{
+  top:50%; height:6px; transform:translateY(-50%);
+  background:repeating-linear-gradient(90deg,#EDEFF1 0 58px,transparent 58px 134px);
+  border-radius:2px;
+}
+.scene[data-track="sky"] .rider{
+  bottom:22%;
+  width:clamp(230px,54%,520px);
+  transform-origin:50% 80%;
+}
+
+/* ---------- 飛越大海 ---------- */
+.sea{
+  position:absolute; left:0; right:0; bottom:0;
+  height:30%;
+  opacity:0;
+  pointer-events:none;
+  background:linear-gradient(180deg,#62AEDB 0%,#3B82B6 100%);
+  transition:opacity .9s ease;
+}
+.sea::after{
+  content:"";
+  position:absolute; inset:0;
+  background:repeating-linear-gradient(96deg,rgba(255,255,255,.22) 0 26px,transparent 26px 84px);
+  animation:swell 3.2s linear infinite;
+}
+@keyframes swell{to{background-position:-110px 0}}
+.scene[data-phase="cruise"] .sea{opacity:1}
+
+/* 巡航時雲往後飛快掠過，速度感就出來了 */
+.scene[data-phase="cruise"] .cloud.c1{animation-duration:4s}
+.scene[data-phase="cruise"] .cloud.c2{animation-duration:5.5s}
+.scene[data-phase="cruise"] .cloud.c3{animation-duration:4.8s}
+
+/* ---------- 空橋與艙門 ---------- */
+.pl-bridge{transform-box:fill-box; transform-origin:0 50%; transition:transform .7s ease, opacity .5s ease}
+.props[data-pl="sealed"] .pl-bridge,
+.props[data-pl="arrived"] .pl-bridge{transform:scaleX(.12); opacity:0}
+
+/* 艙門：關上時那塊深色的門洞淡出，看起來就是門闔起來了 */
+.pl-door rect:last-of-type{transition:opacity .55s ease}
+.rider.pl-sealed .pl-door rect:last-of-type{opacity:0}
+
+/* 起飛後收起落架 */
+.pl-gear{transform-box:fill-box; transform-origin:50% 0; transition:transform .8s ease .4s, opacity .6s ease .4s}
+.rider.pl-airborne .pl-gear{transform:scaleY(.1); opacity:0}
+
+/* ---------- 遠方那架小飛機，巡航時橫越天空 ---------- */
+.pl-far{opacity:0}
+.scene[data-phase="cruise"] .pl-far{animation:far-by 5.2s linear forwards}
+@keyframes far-by{
+  0%  {opacity:0; transform:translateX(0)}
+  12% {opacity:.85}
+  88% {opacity:.85}
+  100%{opacity:0; transform:translateX(760%)}
+}
+
+/* ---------- 目的地的地標 ---------- */
+/* 四個都先放好，降落前才顯示抽到的那一個 */
+.pl-dest{opacity:0; transform-box:fill-box; transform-origin:50% 100%}
+.props[data-dest="jp"] .pl-jp,
+.props[data-dest="fr"] .pl-fr,
+.props[data-dest="eg"] .pl-eg,
+.props[data-dest="au"] .pl-au{animation:loom 1.6s ease-out forwards}
+@keyframes loom{
+  0%  {opacity:0; transform:translateY(26px) scale(.86)}
+  100%{opacity:1; transform:translateY(0) scale(1)}
+}
+
+/* ---------- 下機的旅客 ---------- */
+.pl-out{opacity:0}
+.props[data-pl="arrived"] .pl-out{animation:deplane 2.2s ease-out forwards}
+.props[data-pl="arrived"] .o2{animation-delay:.35s}
+.props[data-pl="arrived"] .o3{animation-delay:.7s}
+@keyframes deplane{
+  0%  {opacity:0; transform:translateX(-30px)}
+  22% {opacity:1; transform:translateX(-14px)}
+  100%{opacity:1; transform:translateX(42px)}
+}
+
+/* 抵達之後，排隊等登機的旅客不要再出現 */
+.props[data-pl="arrived"] .pax-in{animation:none; opacity:0}
+
+/* 起飛之後就把出發機場收掉：飛在海上還看得到航廈會很怪，
+   而且降落的是另一個國家，不該是同一棟航廈。 */
+.pl-term,
+.pl-bridge{transition:opacity .7s ease}
+.scene[data-phase] .pl-term,
+.scene[data-phase] .pl-bridge{opacity:0}
+
+/* 艙門一關，外面就不該再站著人了。
+   不靠登機動畫的最終狀態來隱藏——動畫若被中斷，人會留在畫面上（甚至浮在海上）。 */
+.pax-in{transition:opacity .4s ease}
+.props[data-pl] .pax-in{animation:none; opacity:0}
+
+/* 巡航時在海上，岸邊的小孩要先退場，降落後再出現迎接 */
+.kid{transition:opacity .5s ease}
+.scene[data-phase="cruise"] .kid{opacity:0}

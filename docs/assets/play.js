@@ -148,6 +148,32 @@
     noiseBurst({f:2600, to:900, dur:0.5, at:at, gain:0.11, q:0.5});
   }
 
+  // 停在停機坪時的渦輪低鳴
+  function jetIdle(){
+    var a = AC(); if(!a || muted) return;
+    noiseBurst({f:700, to:520, dur:1.8, gain:0.08, q:1.6});
+    tone({f:220, to:180, dur:1.8, type:"triangle", gain:0.05, lp:900});
+  }
+
+  // 起飛：引擎推到底，由低吼拉高成呼嘯
+  function takeoffRoar(){
+    noiseBurst({f:260, to:1500, dur:2.6, gain:0.24, q:0.6});
+    noiseBurst({f:900, to:2600, dur:2.2, at:0.5, gain:0.14, q:0.9});
+    tone({f:90, to:260, dur:2.4, type:"sawtooth", gain:0.1, lp:700});
+  }
+
+  // 巡航：高空的風聲
+  function cruiseHum(){
+    noiseBurst({f:1200, to:800, dur:2.4, gain:0.07, q:1.2});
+  }
+
+  // 降落：引擎收油，最後輪胎接地
+  function landingSound(){
+    noiseBurst({f:1400, to:420, dur:2.4, gain:0.13, q:0.9});
+    noiseBurst({f:2400, to:900, dur:0.35, at:2.3, gain:0.18, q:2.2});
+    tone({f:150, to:80, at:2.3, dur:0.5, type:"triangle", gain:0.14, lp:500});
+  }
+
   // 開走時的道別聲，配合大家揮手
   function byeChime(){
     tone({f:659.25, dur:0.3, type:"triangle", gain:0.16});
@@ -266,6 +292,25 @@
       '</svg>';
   }
 
+  // 出國的旅客：拉著行李箱，一看就知道不是通勤，是要去玩的
+  function traveller(tint, bagTint){
+    return '<svg viewBox="0 0 40 50" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+      '<rect x="26" y="30" width="13" height="17" rx="2" fill="' + bagTint + '"/>' +
+      '<rect x="26" y="35" width="13" height="2.5" fill="rgba(255,255,255,.55)"/>' +
+      '<rect x="31" y="22" width="2.5" height="9" rx="1.25" fill="#8C98A3"/>' +
+      '<rect x="28" y="20" width="9" height="2.5" rx="1.25" fill="#8C98A3"/>' +
+      '<circle cx="29" cy="48" r="2" fill="#2B3138"/>' +
+      '<circle cx="36" cy="48" r="2" fill="#2B3138"/>' +
+      '<rect x="19" y="23" width="5" height="13" rx="2.5" fill="' + tint + '"/>' +
+      '<rect x="4" y="22" width="16" height="26" rx="6" fill="' + tint + '"/>' +
+      '<circle cx="12" cy="12" r="8" fill="#F7D8B6"/>' +
+      '<path d="M4 10 A 8 8 0 0 1 20 10 Z" fill="#3A2E28"/>' +
+      '<circle cx="9" cy="13" r="1.5" fill="#2B3138"/>' +
+      '<circle cx="15" cy="13" r="1.5" fill="#2B3138"/>' +
+      '<path d="M9.5 17 Q12 19.6 14.5 17" stroke="#2B3138" stroke-width="1.2" fill="none" stroke-linecap="round"/>' +
+      '</svg>';
+  }
+
   function personSvg(tint){
     return '<svg viewBox="0 0 24 50" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
       '<rect x="0.5" y="24" width="4.5" height="15" rx="2.25" fill="' + tint + '"/>' +
@@ -278,6 +323,39 @@
       '<path d="M9.5 17 Q12 19.6 14.5 17" stroke="#2B3138" stroke-width="1.2" fill="none" stroke-linecap="round"/>' +
       '</svg>';
   }
+
+  // 四個目的地的地標。每飛一趟換一個國家，這是飛機獨有的重玩價值。
+  var DESTINATIONS = [
+    { id:"jp", name:"日本", say:"飛機降落在日本，那裡有好高的富士山",
+      svg:'<svg viewBox="0 0 160 110" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+        '<path d="M6 106 L80 14 L154 106 Z" fill="#6E8FB8"/>' +
+        '<path d="M54 46 L80 14 L106 46 Q92 38 80 44 Q68 38 54 46 Z" fill="#F7FAFC"/>' +
+        '<path d="M26 106 Q54 76 80 88 Q108 76 134 106 Z" fill="#5B7BA3"/>' +
+        '</svg>' },
+    { id:"fr", name:"法國", say:"飛機降落在法國，那裡有尖尖的鐵塔",
+      svg:'<svg viewBox="0 0 160 110" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+        '<path d="M62 108 Q72 58 80 8 Q88 58 98 108 L86 108 Q82 60 80 34 Q78 60 74 108 Z" fill="#A6784A"/>' +
+        '<rect x="66" y="72" width="28" height="7" rx="2" fill="#A6784A"/>' +
+        '<rect x="71" y="48" width="18" height="6" rx="2" fill="#A6784A"/>' +
+        '<path d="M60 108 Q80 84 100 108 Z" fill="#8C6339"/>' +
+        '<circle cx="80" cy="6" r="3" fill="#C99A63"/>' +
+        '</svg>' },
+    { id:"eg", name:"埃及", say:"飛機降落在埃及，那裡有大大的金字塔",
+      svg:'<svg viewBox="0 0 160 110" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+        '<path d="M4 106 L54 30 L104 106 Z" fill="#DFC184"/>' +
+        '<path d="M54 30 L104 106 L74 106 Z" fill="#C9A868"/>' +
+        '<path d="M92 106 L124 62 L156 106 Z" fill="#E8CE96"/>' +
+        '<path d="M124 62 L156 106 L138 106 Z" fill="#D2B173"/>' +
+        '</svg>' },
+    { id:"au", name:"澳洲", say:"飛機降落在澳洲，那裡有像貝殼的房子",
+      svg:'<svg viewBox="0 0 160 110" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+        '<rect x="8" y="96" width="144" height="12" rx="3" fill="#C2B7A6"/>' +
+        '<path d="M26 96 Q30 44 74 96 Z" fill="#FAFCFD"/>' +
+        '<path d="M52 96 Q58 36 102 96 Z" fill="#ECF1F4"/>' +
+        '<path d="M80 96 Q88 50 126 96 Z" fill="#FAFCFD"/>' +
+        '<path d="M106 96 Q114 62 140 96 Z" fill="#ECF1F4"/>' +
+        '</svg>' }
+  ];
 
   var DECK =
     '<svg viewBox="0 0 120 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
@@ -539,6 +617,155 @@
         '</svg>'
     },
     {
+      /* 飛機是唯一會「換一個地方」的一台：起飛、飛過海、降落在別的國家。
+         所以它多了垂直方向的移動，還有一段場景切換。
+         class 一律用 pl- 開頭，避免跟其他車的撞名。 */
+      id:"plane", name:"飛機", tint:"#2F7FD1", track:"sky",
+      sound:jetIdle,
+      job:"旅客拉著行李上飛機，要飛去很遠的國家",
+      thanks:"坐飛機，就能去看看不一樣的地方",
+      stop:20,
+      jobMs:13200,
+      loadedMs:3500,   // 登機完就看得到窗戶裡有人
+      doneMs:11100,    // 但要飛到別的國家才算完成
+      extra:function(ctx){
+        var dest = DESTINATIONS[flightNo % DESTINATIONS.length];
+        flightNo++;
+
+        // 空橋收回、艙門關上
+        ctx.later(function(){
+          ctx.props.setAttribute('data-pl','sealed');
+          ctx.rider.classList.add('pl-sealed');
+        }, 3900);
+
+        // 起飛：推力全開，機頭抬起，往右上方爬升出畫面
+        ctx.later(function(){
+          takeoffRoar();
+          ctx.rider.classList.add('pl-airborne');
+          ctx.rider.style.transition = 'left 3s cubic-bezier(.45,0,.75,.6), bottom 3s cubic-bezier(.5,0,.9,.7), transform .9s ease-out';
+          ctx.rider.style.left = '118%';
+          ctx.rider.style.bottom = '300%';
+          ctx.rider.style.transform = 'rotate(-14deg)';
+        }, 4300);
+
+        // 飛越大海：海面出現、雲飛快、遠方一架小飛機經過
+        ctx.later(function(){
+          cruiseHum();
+          ctx.scene.setAttribute('data-phase','cruise');
+          ctx.caption.textContent = '飛機飛過好大的海，要去很遠的國家';
+          ctx.say('飛機飛過好大的海，要去很遠的國家');
+        }, 5300);
+
+        // 目的地的地標從遠方浮現
+        ctx.later(function(){ ctx.props.setAttribute('data-dest', dest.id); }, 7500);
+
+        // 降落：從左邊高空滑下來，機頭拉平，輪胎接地
+        ctx.later(function(){
+          landingSound();
+          ctx.rider.style.transition = 'none';
+          ctx.rider.style.left = '-52%';
+          ctx.rider.style.bottom = '290%';
+          ctx.rider.style.transform = 'rotate(6deg)';
+          void ctx.rider.offsetWidth;
+          ctx.rider.classList.remove('pl-airborne');
+          ctx.rider.style.transition = 'left 2.9s cubic-bezier(.3,0,.5,1), bottom 2.9s cubic-bezier(.35,0,.45,1), transform 2.9s ease-in-out';
+          ctx.rider.style.left = '20%';
+          ctx.rider.style.bottom = '22%';
+          ctx.rider.style.transform = 'rotate(0deg)';
+        }, 7900);
+
+        // 到了：海退去，旅客拉著行李下飛機
+        ctx.later(function(){
+          ctx.scene.setAttribute('data-phase','arrived');
+          ctx.rider.classList.remove('loaded');
+          ctx.props.setAttribute('data-pl','arrived');
+          ctx.say(dest.say);
+        }, 10900);
+      },
+      jobSound:jetIdle,
+      fly:[{ sel:".pax-in", target:".load-port", step:0.45, first:0.3 }],
+      props:
+        // 航廈與空橋
+        prop("pl-term", 0, 100, 18,
+          '<svg viewBox="0 0 120 96" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+          '<rect x="4" y="26" width="112" height="70" rx="5" fill="#E7EDF1"/>' +
+          '<rect x="4" y="26" width="112" height="10" rx="5" fill="#2F7FD1"/>' +
+          '<rect x="14" y="46" width="26" height="20" rx="3" fill="#BFE3F2"/>' +
+          '<rect x="48" y="46" width="26" height="20" rx="3" fill="#BFE3F2"/>' +
+          '<rect x="82" y="46" width="26" height="20" rx="3" fill="#BFE3F2"/>' +
+          '<rect x="48" y="74" width="26" height="22" rx="2" fill="#8A6A4F"/>' +
+          '<rect x="52" y="6" width="5" height="22" fill="#A7B2BA"/>' +
+          '<rect x="44" y="0" width="21" height="9" rx="3" fill="#8C98A3"/>' +
+          '</svg>') +
+        prop("pl-bridge", 17, 120, 28,
+          '<svg viewBox="0 0 90 26" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+          '<rect x="0" y="2" width="90" height="18" rx="6" fill="#CBD5DC"/>' +
+          '<rect x="0" y="2" width="90" height="5" rx="3" fill="#E3EAEF"/>' +
+          '<rect x="16" y="20" width="7" height="6" fill="#9AA6AE"/>' +
+          '<rect x="64" y="20" width="7" height="6" fill="#9AA6AE"/>' +
+          '</svg>') +
+        // 排隊等登機的旅客
+        prop("pax-in w1", 5, 22, 4.6, traveller("#E0653F", "#2F7FD1")) +
+        prop("pax-in w2", 10.5, 22, 4.6, traveller("#2F7FD1", "#E0653F")) +
+        prop("pax-in w3", 16, 22, 4.6, traveller("#7A4FA8", "#3C8C3C")) +
+        // 巡航時遠方那架小小的飛機，讓「飛過大海」這一段不會只有空景
+        prop("pl-far", 6, 300, 9,
+          '<svg viewBox="0 0 120 34" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+          '<path d="M4 20 Q40 10 96 12 L114 16 L96 22 Q40 26 4 20 Z" fill="#FAFCFD"/>' +
+          '<path d="M44 14 L58 0 L70 2 L60 14 Z" fill="#E3EAEF"/>' +
+          '<path d="M44 20 L58 32 L70 30 L60 20 Z" fill="#E3EAEF"/>' +
+          '</svg>') +
+        // 四個目的地都先放好，降落前才顯示抽到的那一個
+        DESTINATIONS.map(function(d){
+          return prop("pl-dest pl-" + d.id, 62, 100, 26, d.svg);
+        }).join("") +
+        prop("pl-out o1", 78, 22, 4.6, traveller("#E0653F", "#2F7FD1")) +
+        prop("pl-out o2", 84, 22, 4.6, traveller("#2F7FD1", "#E0653F")) +
+        prop("pl-out o3", 90, 22, 4.6, traveller("#7A4FA8", "#3C8C3C")) +
+        prop("kid", 93, 22, 4.4, kid("#E0653F")),
+      svg: '<svg viewBox="0 0 520 170" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="飛機">' +
+        '<g class="body">' +
+        // 機翼（後方）
+        '<path d="M188 96 L96 150 L140 152 L246 108 Z" fill="#D5DEE4"/>' +
+        // 尾翼
+        '<path d="M436 88 L470 16 L494 16 L482 88 Z" fill="#2F7FD1"/>' +
+        '<path d="M430 88 L470 78 L500 96 L436 100 Z" fill="#C6D2DA"/>' +
+        // 機身
+        '<path d="M28 92 Q60 60 150 56 L432 56 Q478 58 492 92 Q478 112 432 114 L150 114 Q60 110 28 92 Z" fill="#FAFCFD"/>' +
+        '<path d="M28 92 Q60 60 150 56 L432 56 Q478 58 492 92 Q478 112 432 114 L150 114 Q60 110 28 92 Z" fill="none" stroke="#D5DEE4" stroke-width="3"/>' +
+        '<rect x="70" y="96" width="400" height="9" rx="4" fill="#2F7FD1"/>' +
+        // 駕駛艙
+        '<path d="M40 88 Q58 70 92 66 L104 66 L104 86 L38 90 Z" fill="#28323B"/>' +
+        // 客艙窗戶與乘客
+        '<rect x="128" y="74" width="22" height="13" rx="4" fill="#4B5A66"/>' +
+        '<rect x="170" y="74" width="22" height="13" rx="4" fill="#4B5A66"/>' +
+        '<rect x="290" y="74" width="22" height="13" rx="4" fill="#4B5A66"/>' +
+        '<rect x="332" y="74" width="22" height="13" rx="4" fill="#4B5A66"/>' +
+        '<rect x="374" y="74" width="22" height="13" rx="4" fill="#4B5A66"/>' +
+        paxHead(139, 80, 6, "#E0653F", 1) + paxHead(181, 80, 6, "#2F7FD1", 2) +
+        paxHead(301, 80, 6, "#7A4FA8", 3) + paxHead(343, 80, 6, "#3C8C3C", 4) +
+        paxHead(385, 80, 6, "#E0653F", 5) +
+        // 艙門，登機時打開
+        '<g class="pl-door"><rect x="212" y="66" width="60" height="44" rx="6" fill="#DCE4E9"/>' +
+        '<rect x="218" y="72" width="48" height="32" rx="4" fill="#28323B"/></g>' +
+        loadPort(214, 68, 56, 40) +
+        // 引擎
+        '<ellipse cx="214" cy="122" rx="36" ry="19" fill="#C6D2DA"/>' +
+        '<ellipse cx="214" cy="122" rx="36" ry="19" fill="none" stroke="#A7B2BA" stroke-width="3"/>' +
+        '<ellipse cx="246" cy="122" rx="7" ry="17" fill="#5D6874"/>' +
+        '</g>' +
+        // 起落架，起飛後收起
+        '<g class="pl-gear">' +
+        '<rect x="78" y="110" width="7" height="26" rx="3" fill="#8C98A3"/>' +
+        '<rect x="238" y="128" width="7" height="20" rx="3" fill="#8C98A3"/>' +
+        '<circle cx="81" cy="142" r="11" fill="#2B3138"/>' +
+        '<circle cx="241" cy="152" r="12" fill="#2B3138"/>' +
+        '<circle cx="81" cy="142" r="4" fill="#C9D1D9"/>' +
+        '<circle cx="241" cy="152" r="4.5" fill="#C9D1D9"/>' +
+        '</g>' +
+        '</svg>'
+    },
+    {
       id:"thsr", name:"高鐵", tint:"#F26A21", track:"viaduct",
       sound:whoosh,
       job:"乘客走進車廂坐好，高鐵載大家去很遠的地方",
@@ -631,6 +858,7 @@
   var muteBtn = document.getElementById("mute");
 
   var current = VEHICLES[0];
+  var flightNo = 0;   // 飛機每飛一趟就換下一個目的地
   var timers = [];
   var busy = false;
 
@@ -734,10 +962,13 @@
     rider.innerHTML = uniqueIds(v.svg, "scene");
     rider.setAttribute("aria-label", v.name + "，點一下看它工作");
     propsEl.className = "props";
+    propsEl.removeAttribute("data-dest");
+    propsEl.removeAttribute("data-pl");
+    scene.removeAttribute("data-phase");
     propsEl.innerHTML = v.props;
     caption.textContent = "";
     caption.classList.remove("on");
-    rider.classList.remove("acting", "loaded");
+    rider.classList.remove("acting", "loaded", "pl-airborne", "pl-sealed");
 
     // 一開始就停在自己的工作現場旁邊，第一眼就看得到「車 + 要做的事」
     driveFrom(v.stop);
@@ -757,8 +988,12 @@
     var v = current;
     var parked = v.stop;
     var jobMs = v.jobMs || 5900;
+    // 大部分的車「裝滿」和「工作完成」是同一刻；飛機不是，它要飛到別的
+    // 國家才算完成，所以這兩個時間點可以各自指定。
+    var loadedMs = v.loadedMs != null ? v.loadedMs : Math.max(1600, jobMs - 2400);
+    var doneMs   = v.doneMs   != null ? v.doneMs   : loadedMs;
 
-    // 1. 減速滑進工作現場（高鐵是進站，所以要看得出來在慢下來）
+    // 1. 減速滑進工作現場
     freezeAt(leftPercentNow());
     rider.style.transition = 'left 1.2s cubic-bezier(.18,.7,.25,1)';
     rider.style.left = parked + '%';
@@ -772,32 +1007,38 @@
       caption.classList.add('on');
       v.jobSound();
       say(v.job);
+      if(v.extra){ v.extra({ later: later, rider: rider, scene: scene, props: propsEl, caption: caption, say: say }); }
     }, 1250);
 
-    // 3. 東西都到位了：車斗堆滿 / 滾筒裝滿 / 車窗坐滿乘客 / 店裡上架
+    // 3. 車子看得出來裝到東西了
+    later(function(){ rider.classList.add('loaded'); }, loadedMs);
+
+    // 4. 工作完成：講出這件事對大家的意義，大家互相揮手
     later(function(){
-      rider.classList.add('loaded');
       propsEl.classList.add('done');
-      // 第二句：這件事跟大家的生活有什麼關係。同時大家互相揮手。
       if(v.thanks){
         caption.textContent = v.thanks;
         say(v.thanks);
       }
-    }, Math.max(1600, jobMs - 2400));
+    }, doneMs);
 
-    // 4. 收工：關門、現場復原，然後加速開走
+    // 5. 收工，一切復原，然後加速開走
     later(function(){
       caption.classList.remove('on');
-      rider.classList.remove('acting', 'loaded');
+      rider.classList.remove('acting', 'loaded', 'pl-airborne', 'pl-sealed');
       propsEl.className = 'props';
+      propsEl.removeAttribute('data-dest');
+      propsEl.removeAttribute('data-pl');
+      scene.removeAttribute('data-phase');
       clearFlights();
 
       var away = Math.min(parked + 34, 104);
+      rider.style.bottom = '';
+      rider.style.transform = '';
       rider.style.transition = 'left 1.8s cubic-bezier(.5,0,.85,.55)';
       rider.style.left = away + '%';
       byeChime();
 
-      // 加速完才交回等速的循環動畫，速度銜接得上才不會跳
       later(function(){
         driveFrom(away);
         busy = false;
