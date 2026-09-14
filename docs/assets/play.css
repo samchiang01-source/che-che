@@ -678,7 +678,9 @@
 /* 兩個階段共用同一條規則，動畫的 forwards 才會一直保持在終點。
    若只在 travel 命中，切到 arrived 時規則失效，景色會整個彈回城市。 */
 .scene[data-phase="travel"] .hs-scene,
-.scene[data-phase="arrived"] .hs-scene{
+.scene[data-phase="arrived"] .hs-scene,
+.scene[data-phase="travel"] .lr-scene,
+.scene[data-phase="arrived"] .lr-scene{
   animation:scenery 4.6s cubic-bezier(.35,0,.35,1) forwards;
 }
 @keyframes scenery{
@@ -696,3 +698,8 @@
 .deck{transition:opacity .5s ease}
 .scene[data-phase="travel"] .deck,
 .scene[data-phase="arrived"] .deck{opacity:0}
+
+/* 輕軌的街景捲得比高鐵慢一點：它是市區裡的一小段，不是長途 */
+.lr-scene{will-change:transform}
+.scene[data-phase="travel"] .lr-scene,
+.scene[data-phase="arrived"] .lr-scene{animation-duration:4.2s}

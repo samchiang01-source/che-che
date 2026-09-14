@@ -384,6 +384,77 @@
     '<circle cx="124" cy="109" r="2" fill="#2B3138"/>' +
     '</svg>';
 
+  /* 輕軌沿線的街景。高鐵是城市到鄉下的長途，輕軌是市區裡的一小段，
+     所以經過的是小孩每天看得到的東西：商店、紅綠燈、公園。
+     class 一律用 lr- 開頭。 */
+  var SHOPS =
+    '<svg viewBox="0 0 340 150" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    // 麵包店
+    '<rect x="8" y="58" width="96" height="92" fill="#F2E7D6"/>' +
+    '<rect x="2" y="48" width="108" height="14" rx="4" fill="#D9563F"/>' +
+    '<rect x="18" y="78" width="52" height="34" rx="3" fill="#BFE3F2"/>' +
+    '<rect x="78" y="90" width="20" height="60" rx="2" fill="#8A6A4F"/>' +
+    '<ellipse cx="44" cy="95" rx="18" ry="11" fill="#C89A5B"/>' +
+    '<path d="M32 92 Q44 86 56 92" stroke="#A87B41" stroke-width="3" fill="none"/>' +
+    // 冰淇淋店
+    '<rect x="118" y="46" width="96" height="104" fill="#EAF2F7"/>' +
+    '<rect x="112" y="36" width="108" height="14" rx="4" fill="#2F7FD1"/>' +
+    '<rect x="128" y="66" width="52" height="36" rx="3" fill="#BFE3F2"/>' +
+    '<rect x="188" y="82" width="20" height="68" rx="2" fill="#8A6A4F"/>' +
+    '<path d="M146 96 L154 76 L162 96 Z" fill="#D9A566"/>' +
+    '<circle cx="154" cy="74" r="9" fill="#F5A8C0"/>' +
+    '<circle cx="148" cy="68" r="7" fill="#FBE08A"/>' +
+    // 水果店
+    '<rect x="228" y="62" width="104" height="88" fill="#F4EFE3"/>' +
+    '<rect x="222" y="52" width="116" height="14" rx="4" fill="#3C8C3C"/>' +
+    '<rect x="238" y="82" width="46" height="32" rx="3" fill="#BFE3F2"/>' +
+    '<rect x="296" y="92" width="20" height="58" rx="2" fill="#8A6A4F"/>' +
+    '<circle cx="252" cy="98" r="11" fill="#E04A3C"/>' +
+    '<circle cx="270" cy="100" r="9" fill="#F2B01E"/>' +
+    '<path d="M252 87 Q254 82 258 82" stroke="#4E7D34" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+    '</svg>';
+
+  var PARK =
+    '<svg viewBox="0 0 340 150" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<rect x="0" y="112" width="340" height="38" rx="6" fill="#8FCB63"/>' +
+    // 大樹
+    '<rect x="36" y="84" width="9" height="32" fill="#7A5A3A"/>' +
+    '<circle cx="40" cy="72" r="26" fill="#4E9B48"/>' +
+    '<rect x="296" y="88" width="8" height="28" fill="#7A5A3A"/>' +
+    '<circle cx="300" cy="78" r="22" fill="#5CA852"/>' +
+    // 溜滑梯
+    '<rect x="128" y="62" width="8" height="54" fill="#8C98A3"/>' +
+    '<rect x="174" y="62" width="8" height="54" fill="#8C98A3"/>' +
+    '<rect x="120" y="54" width="70" height="10" rx="3" fill="#E0653F"/>' +
+    '<path d="M182 62 L224 114 L206 114 L170 70 Z" fill="#F2B01E"/>' +
+    '<rect x="126" y="66" width="6" height="48" fill="#BFC7CE"/>' +
+    '<rect x="138" y="74" width="28" height="5" rx="2" fill="#BFC7CE"/>' +
+    '<rect x="138" y="88" width="28" height="5" rx="2" fill="#BFC7CE"/>' +
+    '<rect x="138" y="102" width="28" height="5" rx="2" fill="#BFC7CE"/>' +
+    // 長椅
+    '<rect x="236" y="96" width="48" height="7" rx="3" fill="#B0854A"/>' +
+    '<rect x="236" y="84" width="48" height="6" rx="3" fill="#C89A5B"/>' +
+    '<rect x="240" y="102" width="5" height="14" fill="#8A6A4F"/>' +
+    '<rect x="275" y="102" width="5" height="14" fill="#8A6A4F"/>' +
+    // 小狗
+    '<ellipse cx="82" cy="106" rx="16" ry="9" fill="#C99A63"/>' +
+    '<circle cx="97" cy="98" r="8" fill="#C99A63"/>' +
+    '<ellipse cx="92" cy="94" rx="3.5" ry="6" fill="#A87B41"/>' +
+    '<circle cx="100" cy="97" r="1.8" fill="#2B3138"/>' +
+    '<rect x="72" y="110" width="5" height="8" fill="#A87B41"/>' +
+    '<rect x="88" y="110" width="5" height="8" fill="#A87B41"/>' +
+    '<path d="M66 102 Q60 94 68 92" stroke="#C99A63" stroke-width="5" fill="none" stroke-linecap="round"/>' +
+    '</svg>';
+
+  var LIGHT =
+    '<svg viewBox="0 0 40 130" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<rect x="16" y="52" width="8" height="78" fill="#7E8791"/>' +
+    '<rect x="8" y="4" width="24" height="52" rx="7" fill="#3A434B"/>' +
+    '<circle cx="20" cy="16" r="7" fill="#E04A3C"/>' +
+    '<circle cx="20" cy="30" r="7" fill="#F2B01E"/>' +
+    '<circle cx="20" cy="44" r="7" fill="#4CAF50"/>' +
+    '</svg>';
+
   var DESTINATIONS = [
     { id:"jp", name:"日本", say:"飛機降落在日本，那裡有好高的富士山",
       svg:'<svg viewBox="0 0 160 110" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
@@ -890,12 +961,32 @@
       id:"lrt", name:"輕軌", tint:"#00A167", track:"grass",
       sound:dingDing,
       job:"輕軌到站開門，大家走進車廂坐好囉",
-      thanks:"輕軌每天載大家上學、上班",
-      jobMs:6400,
+      thanks:"輕軌每天載大家上學、上班、去公園玩",
+      jobMs:11000,
+      loadedMs:3000,
+      doneMs:8400,
+      extra:function(ctx){
+        // 開車：街景往後跑，商店街換成公園
+        ctx.later(function(){
+          dingDing();
+          ctx.scene.setAttribute('data-phase','travel');
+          ctx.caption.textContent = '輕軌開過商店街，再開到公園那一站';
+          ctx.say('輕軌開過商店街，再開到公園那一站');
+        }, 3800);
+
+        // 到站
+        ctx.later(function(){
+          dingDing();
+          ctx.scene.setAttribute('data-phase','arrived');
+        }, 8000);
+      },
       stop:22,
       jobSound:function(){ dingDing(); },
       fly:[{sel:".pax-in", target:".load-port"}],
       props:
+        prop("lr-scene lr-shops", 26, 96, 56, SHOPS) +
+        prop("lr-scene lr-light", 88, 96, 5, LIGHT) +
+        prop("lr-scene lr-park", 104, 96, 58, PARK) +
         prop("deck", 72, 30, 20, DECK) +
         prop("pax-in w1", 75, 36, 2.8, personSvg("#E0653F")) +
         prop("pax-in w2", 80, 36, 2.8, personSvg("#2F7FD1")) +
