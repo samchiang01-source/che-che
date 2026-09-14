@@ -325,6 +325,65 @@
   }
 
   // 四個目的地的地標。每飛一趟換一個國家，這是飛機獨有的重玩價值。
+  /* 高鐵沿線的景色：出發時是城市，一路開就變成鄉下。
+     這兩組會在行駛時一起往左捲，做出「窗外的景色一直換」。
+     class 一律用 hs- 開頭。 */
+  var CITY =
+    '<svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<rect x="6" y="78" width="46" height="82" rx="3" fill="#9FB2C4"/>' +
+    '<rect x="62" y="48" width="40" height="112" rx="3" fill="#B6C5D4"/>' +
+    '<rect x="112" y="94" width="52" height="66" rx="3" fill="#8FA4B8"/>' +
+    // 一棟一節一節往上收的高塔，台北的天際線一眼認得出來
+    '<rect x="184" y="26" width="40" height="134" rx="3" fill="#A8BACA"/>' +
+    '<rect x="180" y="52" width="48" height="7" rx="2" fill="#8CA2B6"/>' +
+    '<rect x="180" y="76" width="48" height="7" rx="2" fill="#8CA2B6"/>' +
+    '<rect x="180" y="100" width="48" height="7" rx="2" fill="#8CA2B6"/>' +
+    '<rect x="180" y="124" width="48" height="7" rx="2" fill="#8CA2B6"/>' +
+    '<rect x="200" y="6" width="8" height="22" fill="#8CA2B6"/>' +
+    '<rect x="240" y="66" width="38" height="94" rx="3" fill="#BAC8D6"/>' +
+    '<rect x="286" y="104" width="30" height="56" rx="3" fill="#9FB2C4"/>' +
+    // 窗戶
+    '<g fill="#E6EEF5">' +
+    '<rect x="14" y="88" width="12" height="10"/><rect x="32" y="88" width="12" height="10"/>' +
+    '<rect x="14" y="110" width="12" height="10"/><rect x="32" y="110" width="12" height="10"/>' +
+    '<rect x="70" y="60" width="11" height="10"/><rect x="86" y="60" width="11" height="10"/>' +
+    '<rect x="70" y="82" width="11" height="10"/><rect x="86" y="82" width="11" height="10"/>' +
+    '<rect x="122" y="106" width="13" height="11"/><rect x="142" y="106" width="13" height="11"/>' +
+    '<rect x="250" y="78" width="12" height="10"/><rect x="250" y="100" width="12" height="10"/>' +
+    '</g>' +
+    '</svg>';
+
+  var COUNTRY =
+    '<svg viewBox="0 0 360 150" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    // 遠山
+    '<path d="M0 104 L58 44 L112 104 Z" fill="#8FB07E"/>' +
+    '<path d="M84 104 L146 38 L208 104 Z" fill="#7FA26D"/>' +
+    // 稻田：一畦一畦的
+    '<rect x="0" y="102" width="360" height="48" fill="#9CCB63"/>' +
+    '<g fill="#84B94C">' +
+    '<rect x="0" y="108" width="360" height="5"/><rect x="0" y="120" width="360" height="5"/>' +
+    '<rect x="0" y="132" width="360" height="5"/><rect x="0" y="144" width="360" height="5"/>' +
+    '</g>' +
+    // 農舍
+    '<rect x="228" y="72" width="62" height="34" fill="#F2E7D4"/>' +
+    '<path d="M220 74 L259 48 L298 74 Z" fill="#B9543C"/>' +
+    '<rect x="250" y="86" width="18" height="20" rx="2" fill="#8A6A4F"/>' +
+    '<rect x="234" y="80" width="12" height="11" rx="2" fill="#BFE3F2"/>' +
+    '<rect x="274" y="80" width="12" height="11" rx="2" fill="#BFE3F2"/>' +
+    // 樹
+    '<rect x="178" y="84" width="7" height="24" fill="#7A5A3A"/>' +
+    '<circle cx="181" cy="76" r="20" fill="#4E9B48"/>' +
+    '<rect x="318" y="88" width="6" height="20" fill="#7A5A3A"/>' +
+    '<circle cx="321" cy="82" r="16" fill="#5CA852"/>' +
+    // 水牛，鄉下最好指認的東西
+    '<ellipse cx="96" cy="120" rx="25" ry="14" fill="#5E5852"/>' +
+    '<rect x="78" y="126" width="6" height="14" fill="#4C4742"/>' +
+    '<rect x="108" y="126" width="6" height="14" fill="#4C4742"/>' +
+    '<circle cx="120" cy="110" r="12" fill="#5E5852"/>' +
+    '<path d="M112 102 Q106 94 114 94 M128 102 Q134 94 126 94" stroke="#D8D2C6" stroke-width="4" fill="none" stroke-linecap="round"/>' +
+    '<circle cx="124" cy="109" r="2" fill="#2B3138"/>' +
+    '</svg>';
+
   var DESTINATIONS = [
     { id:"jp", name:"日本", say:"飛機降落在日本，那裡有好高的富士山",
       svg:'<svg viewBox="0 0 160 110" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
@@ -768,13 +827,32 @@
     {
       id:"thsr", name:"高鐵", tint:"#F26A21", track:"viaduct",
       sound:whoosh,
-      job:"乘客走進車廂坐好，高鐵載大家去很遠的地方",
-      thanks:"搭高鐵，就能去看住在遠方的家人",
-      jobMs:6600,
+      job:"乘客走進車廂坐好，高鐵要從城市開往鄉下",
+      thanks:"搭高鐵回鄉下，就能去看阿公阿嬤",
+      jobMs:11600,
+      loadedMs:3200,
+      doneMs:9000,
+      extra:function(ctx){
+        // 開車：車輪轉快，窗外的景色從城市一路換成鄉下
+        ctx.later(function(){
+          whoosh();
+          ctx.scene.setAttribute('data-phase','travel');
+          ctx.caption.textContent = '窗外的高樓不見了，變成好大的稻田';
+          ctx.say('窗外的高樓不見了，變成好大的稻田');
+        }, 4000);
+
+        // 到站，景色停在鄉下
+        ctx.later(function(){
+          dingDing();
+          ctx.scene.setAttribute('data-phase','arrived');
+        }, 8600);
+      },
       stop:14,
       jobSound:function(){ dingDing(); whoosh(); },
       fly:[{sel:".pax-in", target:".load-port"}],
       props:
+        prop("hs-scene hs-city", 30, 96, 52, CITY) +
+        prop("hs-scene hs-country", 104, 96, 58, COUNTRY) +
         prop("deck", 76, 46, 20, DECK) +
         prop("pax-in w1", 79, 52, 2.6, personSvg("#E0653F")) +
         prop("pax-in w2", 84, 52, 2.6, personSvg("#2F7FD1")) +
