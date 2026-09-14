@@ -544,12 +544,13 @@
 /* ---------- 工地：水泥一到，房子一層一層長出來 ---------- */
 /* 這是水泥車存在的理由，所以要讓小孩看到房子真的被蓋出來 */
 .build{opacity:0}
-.bd2{transform-box:fill-box; transform-origin:50% 100%}
-.bd3{transform-box:fill-box}
-.props.working .bd1{animation:appear .4s ease 4.0s forwards}
-.props.working .bd2{animation:raise .55s cubic-bezier(.3,1.25,.5,1) 4.5s forwards}
-.props.working .bd3{animation:drop .5s cubic-bezier(.3,1.35,.5,1) 5.0s forwards}
-.props.working .bd4{animation:appear .4s ease 5.5s forwards}
+.bd2,.bd3,.bd4{transform-box:fill-box; transform-origin:50% 100%}
+.bd5{transform-box:fill-box}
+.props.working .bd1{animation:appear .4s ease 3.9s forwards}
+.props.working .bd2{animation:raise .5s cubic-bezier(.3,1.25,.5,1) 4.3s forwards}
+.props.working .bd3{animation:raise .5s cubic-bezier(.3,1.25,.5,1) 4.9s forwards}
+.props.working .bd4{animation:raise .5s cubic-bezier(.3,1.25,.5,1) 5.5s forwards}
+.props.working .bd5{animation:drop .5s cubic-bezier(.3,1.35,.5,1) 6.1s forwards}
 @keyframes raise{
   0%{opacity:1; transform:scaleY(0)}
   100%{opacity:1; transform:scaleY(1)}
@@ -703,3 +704,68 @@
 .lr-scene{will-change:transform}
 .scene[data-phase="travel"] .lr-scene,
 .scene[data-phase="arrived"] .lr-scene{animation-duration:4.2s}
+
+/* ---------- 消防隊員 ---------- */
+/* 車子噴水是機器在做，看得到「人」拉著水線衝上去救火，才是小孩記得住的 */
+.fire-man{opacity:0}
+.props.working .fire-man{animation:run-in .55s cubic-bezier(.3,1.2,.5,1) .2s forwards}
+@keyframes run-in{
+  0%  {opacity:0; transform:translateX(-34px)}
+  100%{opacity:1; transform:translateX(0)}
+}
+
+/* 他手上那條水線 */
+.fj{stroke-dasharray:460; stroke-dashoffset:460; opacity:0; stroke-linejoin:round}
+.props.working .fj{animation:jet 3.6s ease-out .75s forwards}
+.props.working .fj2{animation:jet 3.6s ease-out .92s forwards}
+
+/* ==================================================================
+   垃圾車：收完之後載去哪裡
+   ================================================================== */
+
+/* 沿線的街景，跟高鐵、輕軌共用同一套捲動 */
+.gb-scene{will-change:transform}
+.scene[data-phase="travel"] .gb-scene,
+.scene[data-phase="arrived"] .gb-scene{
+  animation:scenery 3.4s cubic-bezier(.35,0,.35,1) forwards;
+}
+
+/* 開往處理場的路上，路邊的人和垃圾袋都留在原本那條街 */
+.worker,
+.bag{transition:opacity .5s ease}
+.scene[data-phase] .worker,
+.scene[data-phase] .bag,
+.scene[data-phase] .gb-local{animation:none; opacity:0}
+
+/* 到了就掀起車斗，整車倒進坑裡 */
+/* 支點放在車尾（SVG 右端＝畫面左端），車頭那端抬起來，
+   垃圾才會順著往後滑進坑裡。圖是翻面的，所以正角度在畫面上是逆時針。 */
+.rider.gb-tip .gb-bed{
+  transform-box:fill-box;
+  transform-origin:97% 100%;
+  animation:tip 2.8s cubic-bezier(.4,0,.3,1) forwards;
+}
+@keyframes tip{
+  0%  {transform:rotate(0deg)}
+  32% {transform:rotate(16deg)}
+  76% {transform:rotate(16deg)}
+  100%{transform:rotate(0deg)}
+}
+
+/* 車斗裡的垃圾跟著倒光 */
+.rider.gb-tip .fill-steps{animation:dump 1.5s ease-in .5s forwards}
+@keyframes dump{
+  0%  {transform:scaleY(1); opacity:1}
+  70% {transform:scaleY(.35); opacity:1}
+  100%{transform:scaleY(0); opacity:0}
+}
+
+/* 坑裡的垃圾越堆越多 */
+.gb-pit{transform-box:fill-box; transform-origin:50% 100%; transform:scaleY(0)}
+.props[data-phase] .gb-pit{transform:scaleY(0)}
+.scene[data-phase="arrived"] .gb-pit{animation:fill-up 1.2s ease .9s forwards}
+
+/* 煙囪一直冒白煙 */
+.gp{transform-box:fill-box; transform-origin:50% 100%; opacity:0; animation:rise 2.6s ease-out infinite}
+.g2{animation-delay:-.9s}
+.g3{animation-delay:-1.8s}

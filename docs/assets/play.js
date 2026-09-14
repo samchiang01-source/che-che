@@ -311,6 +311,26 @@
       '</svg>';
   }
 
+  // 消防隊員：紅色頭盔、反光條制服，手裡握著水線
+  function firefighter(){
+    return '<svg viewBox="0 0 46 58" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+      '<rect x="8" y="26" width="18" height="31" rx="6" fill="#2C3540"/>' +
+      '<rect x="8" y="36" width="18" height="4" fill="#F2D24A"/>' +
+      '<rect x="8" y="47" width="18" height="4" fill="#F2D24A"/>' +
+      '<circle cx="17" cy="17" r="8.5" fill="#F7D8B6"/>' +
+      '<path d="M7 15 Q7 3 17 3 Q27 3 27 15 Z" fill="#E03131"/>' +
+      '<rect x="3" y="13" width="28" height="4.5" rx="2.25" fill="#B82626"/>' +
+      '<circle cx="14" cy="18" r="1.6" fill="#2B3138"/>' +
+      '<circle cx="20" cy="18" r="1.6" fill="#2B3138"/>' +
+      '<path d="M14 22 Q17 24.6 20 22" stroke="#2B3138" stroke-width="1.3" fill="none" stroke-linecap="round"/>' +
+      // 舉著水線的手臂，朝右前方的火場
+      '<rect x="24" y="22" width="17" height="7" rx="3.5" fill="#2C3540" transform="rotate(-24 24 25.5)"/>' +
+      '<rect x="37" y="12" width="9" height="6" rx="2" fill="#9EA7AF" transform="rotate(-24 37 15)"/>' +
+      // 拖在身後的水帶
+      '<path d="M10 52 Q-2 50 -10 56" stroke="#E8B830" stroke-width="5" fill="none" stroke-linecap="round"/>' +
+      '</svg>';
+  }
+
   function personSvg(tint){
     return '<svg viewBox="0 0 24 50" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
       '<rect x="0.5" y="24" width="4.5" height="15" rx="2.25" fill="' + tint + '"/>' +
@@ -328,6 +348,54 @@
   /* 高鐵沿線的景色：出發時是城市，一路開就變成鄉下。
      這兩組會在行駛時一起往左捲，做出「窗外的景色一直換」。
      class 一律用 hs- 開頭。 */
+  /* 垃圾收完要載去哪裡？小孩很少被講到這件事，所以讓他看見終點：
+     收完垃圾的車會開到垃圾處理場，把整車倒進去。 */
+  var HOMES =
+    '<svg viewBox="0 0 320 150" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<rect x="10" y="62" width="84" height="88" fill="#F2E7D6"/>' +
+    '<path d="M2 64 L52 30 L102 64 Z" fill="#C0603F"/>' +
+    '<rect x="40" y="104" width="24" height="46" rx="2" fill="#8A6A4F"/>' +
+    '<rect x="20" y="80" width="20" height="18" rx="2" fill="#BFE3F2"/>' +
+    '<rect x="66" y="80" width="20" height="18" rx="2" fill="#BFE3F2"/>' +
+    '<rect x="116" y="40" width="76" height="110" fill="#E7EDF1"/>' +
+    '<rect x="112" y="32" width="84" height="12" rx="3" fill="#C6D2DA"/>' +
+    '<g fill="#BFE3F2">' +
+    '<rect x="126" y="56" width="20" height="18" rx="2"/><rect x="158" y="56" width="20" height="18" rx="2"/>' +
+    '<rect x="126" y="86" width="20" height="18" rx="2"/><rect x="158" y="86" width="20" height="18" rx="2"/>' +
+    '<rect x="126" y="116" width="20" height="18" rx="2"/><rect x="158" y="116" width="20" height="18" rx="2"/>' +
+    '</g>' +
+    '<rect x="214" y="72" width="92" height="78" fill="#EFE3D2"/>' +
+    '<path d="M206 74 L260 42 L314 74 Z" fill="#B9543C"/>' +
+    '<rect x="248" y="110" width="24" height="40" rx="2" fill="#8A6A4F"/>' +
+    '<rect x="224" y="88" width="20" height="16" rx="2" fill="#BFE3F2"/>' +
+    '<rect x="278" y="88" width="20" height="16" rx="2" fill="#BFE3F2"/>' +
+    '</svg>';
+
+  var PLANT =
+    '<svg viewBox="0 0 320 190" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    // 高高的煙囪，是垃圾處理場最好認的樣子
+    '<rect x="222" y="12" width="34" height="140" rx="4" fill="#C6CDD2"/>' +
+    '<rect x="216" y="12" width="46" height="12" rx="4" fill="#A7B2BA"/>' +
+    '<rect x="222" y="46" width="34" height="8" fill="#E04A3C"/>' +
+    '<rect x="222" y="70" width="34" height="8" fill="#E04A3C"/>' +
+    // 廠房
+    '<rect x="34" y="70" width="176" height="82" rx="5" fill="#D8DEE2"/>' +
+    '<rect x="34" y="70" width="176" height="12" rx="5" fill="#9FB2C4"/>' +
+    '<rect x="52" y="94" width="30" height="24" rx="3" fill="#BFE3F2"/>' +
+    '<rect x="92" y="94" width="30" height="24" rx="3" fill="#BFE3F2"/>' +
+    '<rect x="132" y="94" width="30" height="24" rx="3" fill="#BFE3F2"/>' +
+    // 倒垃圾的坑，車子就是把整車倒進這裡
+    '<rect x="46" y="126" width="150" height="26" rx="4" fill="#4E565C"/>' +
+    '<rect x="46" y="126" width="150" height="7" rx="3" fill="#394146"/>' +
+    '<rect class="gb-pit" x="52" y="134" width="138" height="16" rx="3" fill="#4E7D34"/>' +
+    '<rect x="24" y="150" width="272" height="10" rx="3" fill="#A7AEB3"/>' +
+    // 煙囪冒出的白煙
+    '<g class="gb-smoke">' +
+    '<circle class="gp g1" cx="239" cy="4" r="13" fill="#DDE3E7"/>' +
+    '<circle class="gp g2" cx="252" cy="-8" r="10" fill="#E9EEF1"/>' +
+    '<circle class="gp g3" cx="230" cy="-16" r="9" fill="#F1F5F7"/>' +
+    '</g>' +
+    '</svg>';
   var CITY =
     '<svg viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
     '<rect x="6" y="78" width="46" height="82" rx="3" fill="#9FB2C4"/>' +
@@ -504,30 +572,54 @@
       stop:44,
       jobSound:function(){ furElise(); LAND.forEach(thud); },
       fly:[{sel:".bag", via:".worker .hand-port", target:".load-port", step:1.2, first:0.3}],
-      jobMs:7200,
+      jobMs:13400,
+      doneMs:5600,
+      extra:function(ctx){
+        // 收滿了就出發，街景換成垃圾處理場
+        ctx.later(function(){
+          truckHorn();
+          ctx.scene.setAttribute('data-phase','travel');
+          ctx.caption.textContent = '收滿了！垃圾車要把垃圾載去處理場';
+          ctx.say('收滿了！垃圾車要把垃圾載去處理場');
+        }, 6400);
+
+        // 到了：車斗掀起來，整車垃圾倒進坑裡
+        ctx.later(function(){
+          ctx.scene.setAttribute('data-phase','arrived');
+          ctx.rider.classList.add('gb-tip');
+          engineRumble();
+          ctx.caption.textContent = '車斗掀起來，垃圾倒進大坑，在這裡處理掉';
+          ctx.say('車斗掀起來，垃圾倒進大坑，在這裡處理掉');
+        }, 9800);
+      },
       props:
+        prop("gb-scene gb-homes", 24, 96, 54, HOMES) +
+        prop("gb-scene gb-plant", 104, 96, 56, PLANT) +
         prop("bag b1", 27, 30, 5.8, BAG) +
         prop("bag b2", 32, 30, 5.8, BAG) +
         prop("bag b3", 37, 30, 5.8, BAG) +
         prop("worker", 43, 30, 5.6, worker("#F5A524")) +
-        prop("kid", 15, 30, 4.4, kid("#E0653F")),
+        prop("kid gb-local", 15, 30, 4.4, kid("#E0653F")),
       svg: '<svg viewBox="0 0 380 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="垃圾車">' +
         '<g class="body">' +
+        // 駕駛室與底盤不會動，傾倒時只有車斗掀起來
+        '<path d="M18 124 L18 70 Q18 58 30 56 L62 52 L84 52 L84 124 Z" fill="#F5D430"/>' +
+        '<path d="M30 66 L74 62 L74 92 L28 92 Z" fill="#BFE3F2"/>' +
+        '<path d="M30 66 L52 64 L36 92 L28 92 Z" fill="#DCF0F8"/>' +
+        '<rect x="16" y="104" width="14" height="18" rx="4" fill="#5D6874"/>' +
+        // 車斗：整組會以車尾為支點掀起來
+        '<g class="gb-bed">' +
         '<rect x="82" y="52" width="212" height="72" rx="8" fill="#EFC81C"/>' +
         '<rect x="82" y="52" width="212" height="16" rx="6" fill="#D3AE10"/>' +
-        // 車斗裡越堆越高的垃圾
         '<g class="fill-steps"><rect x="90" y="64" width="196" height="56" rx="4" fill="#4E7D34"/>' +
         '<circle cx="130" cy="68" r="10" fill="#5C8F3E"/><circle cx="190" cy="64" r="12" fill="#5C8F3E"/>' +
         '<circle cx="248" cy="69" r="9" fill="#5C8F3E"/></g>' +
         '<rect x="252" y="38" width="66" height="86" rx="8" fill="#D3AE10"/>' +
         '<rect x="258" y="46" width="54" height="30" rx="5" fill="#8F7508"/>' +
         '<rect x="306" y="86" width="26" height="10" rx="4" fill="#7E8791"/>' +
-        '<path d="M18 124 L18 70 Q18 58 30 56 L62 52 L84 52 L84 124 Z" fill="#F5D430"/>' +
-        '<path d="M30 66 L74 62 L74 92 L28 92 Z" fill="#BFE3F2"/>' +
-        '<path d="M30 66 L52 64 L36 92 L28 92 Z" fill="#DCF0F8"/>' +
-        '<rect x="16" y="104" width="14" height="18" rx="4" fill="#5D6874"/>' +
         '<rect x="94" y="78" width="148" height="8" rx="4" fill="#FFFFFF" opacity=".85"/>' +
         loadPort(258, 42, 56, 22) +
+        '</g>' +
         '<g class="notes"><text x="200" y="34" font-size="34" fill="#2E7D32">&#9834;</text></g>' +
         '<g class="notes n2"><text x="238" y="38" font-size="26" fill="#43A047">&#9835;</text></g>' +
         '<g class="notes n3"><text x="170" y="36" font-size="22" fill="#2E7D32">&#9834;</text></g>' +
@@ -541,10 +633,11 @@
          工人把砂石裝進滾筒 → 滾筒轉 → 水泥送到工地 → 房子一層一層蓋起來。 */
       id:"mixer", name:"水泥車", tint:"#EE7B2E", track:"road",
       sound:engineRumble,
-      job:"砂石裝進滾筒，水泥車把水泥送到工地",
-      thanks:"有了水泥車，才蓋得出我們住的房子",
+      job:"砂石裝進滾筒，水泥車把水泥送到工地蓋大樓",
+      thanks:"大樓蓋好了，颳風下雨我們都住得安安全全",
       stop:30,
-      jobMs:9200,
+      jobMs:10600,
+      doneMs:8400,
       jobSound:function(){
         engineRumble(); LAND.forEach(gravel);
         thud(4.6); thud(5.1); thud(5.6);
@@ -568,18 +661,35 @@
         prop("crete c2", 49, 45, 4.6, rock("#8A7F70")) +
         prop("crete c3", 54, 42, 4.0, rock("#A8A096")) +
         // 工地：水泥一到，房子就一層一層長出來
-        prop("site", 74, 100, 24,
-          '<svg viewBox="0 0 120 112" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
-          '<rect x="2" y="102" width="116" height="8" rx="3" fill="#A89880"/>' +
-          '<rect class="build bd1" x="10" y="92" width="100" height="11" rx="2" fill="#B9BFC4"/>' +
-          '<rect class="build bd2" x="16" y="46" width="88" height="47" fill="#F0E4D2"/>' +
-          '<path class="build bd3" d="M4 49 L60 13 L116 49 Z" fill="#C0603F"/>' +
-          '<g class="build bd4">' +
-          '<rect x="50" y="66" width="20" height="27" rx="2" fill="#8A6A4F"/>' +
-          '<rect x="24" y="56" width="18" height="16" rx="2" fill="#BFE3F2"/>' +
-          '<rect x="78" y="56" width="18" height="16" rx="2" fill="#BFE3F2"/>' +
+        prop("site", 72, 100, 26,
+          // 一層一層長上去的大樓。蓋得高、蓋得牢，是水泥車存在的理由。
+          '<svg viewBox="0 0 120 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+          '<rect x="2" y="190" width="116" height="10" rx="3" fill="#A89880"/>' +
+          '<rect class="build bd1" x="8" y="176" width="104" height="16" rx="2" fill="#B9BFC4"/>' +
+          '<g class="build bd2">' +
+          '<rect x="14" y="132" width="92" height="46" fill="#EDE6D8"/>' +
+          '<rect x="48" y="148" width="24" height="30" rx="2" fill="#8A6A4F"/>' +
+          '<rect x="22" y="144" width="18" height="16" rx="2" fill="#BFE3F2"/>' +
+          '<rect x="80" y="144" width="18" height="16" rx="2" fill="#BFE3F2"/>' +
           '</g>' +
-          '<rect class="site-port" x="38" y="86" width="44" height="16" fill="none" pointer-events="none"/>' +
+          '<g class="build bd3">' +
+          '<rect x="14" y="90" width="92" height="44" fill="#F2ECE0"/>' +
+          '<rect x="22" y="102" width="20" height="18" rx="2" fill="#BFE3F2"/>' +
+          '<rect x="50" y="102" width="20" height="18" rx="2" fill="#BFE3F2"/>' +
+          '<rect x="78" y="102" width="20" height="18" rx="2" fill="#BFE3F2"/>' +
+          '</g>' +
+          '<g class="build bd4">' +
+          '<rect x="14" y="48" width="92" height="44" fill="#EDE6D8"/>' +
+          '<rect x="22" y="60" width="20" height="18" rx="2" fill="#BFE3F2"/>' +
+          '<rect x="50" y="60" width="20" height="18" rx="2" fill="#BFE3F2"/>' +
+          '<rect x="78" y="60" width="20" height="18" rx="2" fill="#BFE3F2"/>' +
+          '</g>' +
+          '<g class="build bd5">' +
+          '<rect x="8" y="38" width="104" height="12" rx="3" fill="#C0603F"/>' +
+          '<rect x="72" y="18" width="24" height="22" rx="4" fill="#9FB2C4"/>' +
+          '<rect x="78" y="10" width="12" height="10" rx="3" fill="#8CA2B6"/>' +
+          '</g>' +
+          '<rect class="site-port" x="34" y="168" width="52" height="18" fill="none" pointer-events="none"/>' +
           '</svg>') +
         prop("kid", 70, 30, 4.4, kid("#2F7FD1")),
       svg: '<svg viewBox="0 0 380 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="水泥車">' +
@@ -613,12 +723,18 @@
     {
       id:"fire", name:"消防車", tint:"#E03131", track:"road",
       sound:siren,
-      job:"房子失火了，消防車噴水把火滅掉",
-      thanks:"消防員把火滅掉，大家就安全了",
+      job:"房子失火了！消防隊員拉水線噴水救火",
+      thanks:"消防隊員好勇敢，把火滅掉大家就安全了",
       stop:18,
       jobSound:function(){ siren(); waterSpray(); },
       fly:[],
       props:
+        prop("fire-man", 60, 30, 5.6, firefighter()) +
+        prop("fire-jet", 63, 52, 26,
+          '<svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+          '<path class="fj" d="M4 112 Q74 -10 194 22" stroke="#7EC8F0" stroke-width="15" fill="none" stroke-linecap="round"/>' +
+          '<path class="fj fj2" d="M6 106 Q76 4 190 32" stroke="#CDEBFA" stroke-width="7" fill="none" stroke-linecap="round"/>' +
+          '</svg>') +
         prop("house", 68, 100, 23,
           // viewBox 上方留白，火舌和濃煙才竄得出屋頂
           '<svg viewBox="0 -70 120 186" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
