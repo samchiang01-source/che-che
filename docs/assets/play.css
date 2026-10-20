@@ -769,3 +769,133 @@
 .gp{transform-box:fill-box; transform-origin:50% 100%; opacity:0; animation:rise 2.6s ease-out infinite}
 .g2{animation-delay:-.9s}
 .g3{animation-delay:-1.8s}
+
+/* ==================================================================
+   救護車：載人、開路、送到醫院
+   ================================================================== */
+
+/* 擋路的車也是車頭朝左畫的，跟車庫裡的車一樣翻面 */
+.amb-car svg{transform:scaleX(-1)}
+
+/* ---------- 現場：阿公被抬上擔架 ---------- */
+
+/* 躺著的人一開始看不見，被抬上去才出現。
+   同一刻坐在地上的阿公淡出，小孩就看得懂是「同一個人被抬上去了」。 */
+.amb-lying{opacity:0}
+.props.working .amb-cot .amb-lying{animation:appear .5s ease 1.1s forwards}
+.props.working .amb-hurt{animation:amb-fade .5s ease 1.1s forwards}
+@keyframes amb-fade{to{opacity:0}}
+
+/* 擔架有輪子，是「推」進去的，所以走直線，不像垃圾袋那樣拋物線飛進去 */
+.props.working .amb-cot{
+  animation:amb-push 1.4s cubic-bezier(.4,0,.3,1) var(--fly-delay,1.5s) forwards;
+}
+@keyframes amb-push{
+  0%  {transform:translate(0,0)}
+  72% {transform:translate(calc(var(--dx) * .82), calc(var(--dy) * .82))}
+  100%{transform:translate(var(--dx), var(--dy))}
+}
+
+/* 救護員推擔架的手 */
+.props.working .amb-medic .arm{animation:amb-shove 1.2s ease-in-out 1.2s 2}
+@keyframes amb-shove{
+  0%,100%{transform:rotate(0deg)}
+  50%    {transform:rotate(28deg)}
+}
+
+/* 車尾雙開門往兩側開，露出後面暗暗的車廂 */
+.amb-door{transform-box:fill-box}
+.amb-door-a{transform-origin:0% 50%}
+.amb-door-b{transform-origin:100% 50%}
+.rider.acting .amb-door{animation:amb-open .55s ease .5s forwards}
+@keyframes amb-open{to{transform:scaleX(.1)}}
+
+/* 載到人之後，側窗就看得見他躺在裡面 —— 「東西真的進到車子裡」 */
+.amb-inside{opacity:0}
+.rider.loaded .amb-inside{animation:appear .5s ease forwards}
+
+/* 上路之後，現場的人留在原本那條街上 */
+.scene[data-phase] .amb-hurt,
+.scene[data-phase] .amb-cot,
+.scene[data-phase] .amb-medic,
+.scene[data-phase] .amb-local{animation:none; opacity:0}
+
+/* ---------- 馬路上：大家讓路 ---------- */
+
+/* 店面往後捲，速度感就出來了。兩個階段共用一條規則，
+   否則切到 arrived 的時候 forwards 會失效，街景整個彈回去。 */
+.amb-street{will-change:transform}
+.scene[data-phase="travel"] .amb-street,
+.scene[data-phase="arrived"] .amb-street{
+  animation:amb-street-run 9.5s linear forwards;
+}
+@keyframes amb-street-run{
+  0%  {transform:translateX(0)}
+  100%{transform:translateX(-124vw)}
+}
+
+/* 擋路的車平常不在畫面上，輪到它才開進來停在救護車前面 */
+.amb-car{opacity:0; transform:translateX(44%)}
+.amb-car.amb-here{
+  opacity:1;
+  transform:translateX(0);
+  transition:opacity .4s ease, transform 1s cubic-bezier(.2,.7,.3,1);
+}
+
+/* 讓路：往路邊靠過去、慢下來，然後被救護車超過去 */
+.amb-car.amb-gone{animation:amb-yield 1.6s cubic-bezier(.3,0,.4,1) forwards}
+@keyframes amb-yield{
+  0%  {opacity:1; transform:translate(0,0) scale(1)}
+  26% {opacity:1; transform:translate(5%,15%) scale(.97)}
+  100%{opacity:0; transform:translate(-66%,21%) scale(.9)}
+}
+
+/* 靠邊的時候打方向燈 —— 這是真的在路上會看到的訊號 */
+.amb-blink{opacity:0}
+.amb-car.amb-gone .amb-blink{animation:blink .34s steps(1,end) 5}
+
+/* ---------- 醫院：倒車進急診室 ---------- */
+
+.amb-hosp,.amb-doc,.amb-nurse,.amb-cot2{opacity:0}
+
+/* 救護車是倒車進急診室的，所以醫院從畫面左邊（車尾那側）滑進來 */
+.scene[data-phase="arrived"] .amb-hosp{
+  animation:amb-arrive 1.4s cubic-bezier(.2,.7,.3,1) forwards;
+}
+@keyframes amb-arrive{
+  0%  {opacity:0; transform:translateX(-40%)}
+  100%{opacity:1; transform:translateX(0)}
+}
+
+.scene[data-phase="arrived"] .amb-doc,
+.scene[data-phase="arrived"] .amb-nurse{animation:appear .5s ease .9s forwards}
+
+/* 擔架從車尾推出來，送進急診室大門 */
+.scene[data-phase="arrived"] .amb-cot2 .amb-lying{opacity:1}
+.scene[data-phase="arrived"] .amb-cot2{animation:amb-unload 2.6s ease 1.5s forwards}
+@keyframes amb-unload{
+  0%  {opacity:0; transform:translateX(8%)}
+  16% {opacity:1; transform:translateX(0)}
+  100%{opacity:1; transform:translateX(-88%)}
+}
+
+/* 自動門在擔架到門口的時候打開 */
+.amb-door-l,.amb-door-r{transform-box:fill-box}
+.scene[data-phase="arrived"] .amb-door-l{animation:amb-slide-l 1s ease 2.6s forwards}
+.scene[data-phase="arrived"] .amb-door-r{animation:amb-slide-r 1s ease 2.6s forwards}
+@keyframes amb-slide-l{to{transform:translateX(-94%)}}
+@keyframes amb-slide-r{to{transform:translateX(94%)}}
+
+/* 最重要的一格：阿公在門口揮手。小孩要看到的是「他沒事了」，
+   不是「他被送走了」。 */
+.props.done .amb-cot2 .wave{animation:wave 1.7s ease-in-out infinite}
+.props.done .amb-doc .wave{animation:wave 1.7s ease-in-out .35s infinite}
+.props.done .amb-nurse .wave{animation:wave 1.7s ease-in-out .7s infinite}
+
+@media (prefers-reduced-motion:reduce){
+  .amb-car.amb-here{transition-duration:.2s}
+  .amb-car.amb-gone,
+  .props.working .amb-cot,
+  .scene[data-phase="arrived"] .amb-cot2{animation-duration:.3s}
+  .amb-street{animation:none !important}
+}

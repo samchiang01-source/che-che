@@ -180,6 +180,35 @@
     tone({f:880, at:0.22, dur:0.42, type:"triangle", gain:0.16});
   }
 
+  /* 救護車的「喔咿喔咿」。跟消防車刻意不一樣：起音更高、擺盪更快，
+     小孩光聽聲音就要分得出來路上來的是哪一台。 */
+  function ambuSiren(){
+    for(var i=0;i<4;i++){
+      tone({f:860, to:1240, at:i*0.70, dur:0.35, type:"square", gain:0.10, lp:3000});
+      tone({f:1240, to:860, at:i*0.70+0.35, dur:0.35, type:"square", gain:0.10, lp:3000});
+    }
+  }
+
+  // 讓路的車回一聲短喇叭，像在說「你先過」
+  function yieldBeep(){
+    tone({f:392, dur:0.15, type:"sawtooth", gain:0.12, lp:1400});
+    tone({f:523.25, at:0.13, dur:0.22, type:"sawtooth", gain:0.12, lp:1600});
+  }
+
+  // 倒車進急診室的提示音
+  function reverseBeep(){
+    for(var i=0;i<4;i++){
+      tone({f:1046.5, at:i*0.42, dur:0.16, type:"square", gain:0.09, lp:2400});
+    }
+  }
+
+  // 交給醫生之後，監測器穩穩地嗶著 —— 這是「他沒事了」的聲音
+  function monitorBeep(){
+    for(var i=0;i<3;i++){
+      tone({f:1318.5, at:i*0.62, dur:0.09, type:"sine", gain:0.09});
+    }
+  }
+
   // 每件貨物飛出去時的時間點，跟畫面上的動畫對齊
   var LAND = [1.2, 1.65, 2.1];
 
@@ -343,6 +372,161 @@
       '<path d="M9.5 17 Q12 19.6 14.5 17" stroke="#2B3138" stroke-width="1.2" fill="none" stroke-linecap="round"/>' +
       '</svg>';
   }
+
+  /* ============ 救護車：現場的人、擋路的車、醫院 ============ */
+  /* class 一律用 amb- 開頭，免得又發生垃圾袋那種撞名事故。 */
+
+  // 救護員：深藍制服加反光條，比消防隊員輕裝，手在左邊（推擔架那一側）
+  function medic(){
+    return '<svg viewBox="0 0 32 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+      '<rect x="8" y="27" width="18" height="29" rx="6" fill="#1F3A5F"/>' +
+      '<rect x="8" y="36" width="18" height="3.6" fill="#E8E34A"/>' +
+      '<rect x="8" y="46" width="18" height="3.6" fill="#E8E34A"/>' +
+      '<circle cx="17" cy="17" r="8.4" fill="#F7D8B6"/>' +
+      '<path d="M8 15 Q8 5 17 5 Q26 5 26 15 Z" fill="#2B4E7E"/>' +
+      '<rect x="4" y="13.4" width="26" height="3.6" rx="1.8" fill="#1F3A5F"/>' +
+      '<circle cx="14" cy="18" r="1.6" fill="#2B3138"/>' +
+      '<circle cx="20" cy="18" r="1.6" fill="#2B3138"/>' +
+      '<path d="M14 22 Q17 24.6 20 22" stroke="#2B3138" stroke-width="1.3" fill="none" stroke-linecap="round"/>' +
+      '<g class="arm"><rect x="0.5" y="27" width="8" height="21" rx="4" fill="#1F3A5F"/></g>' +
+      '</svg>';
+  }
+
+  /* 擔架。有輪子，所以是「推」進車裡的 —— 這台車跟別台最大的差別就是
+     載的是人，不能用丟的。躺著的人一開始看不見，被抬上去才出現。 */
+  function cot(){
+    return '<svg viewBox="0 0 74 38" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+      '<g class="amb-lying">' +
+      '<rect x="16" y="6" width="48" height="9" rx="4.5" fill="#E7EDF1"/>' +
+      '<rect x="16" y="9" width="48" height="2.4" fill="#C7D2DA"/>' +
+      '<circle cx="14" cy="9" r="5.6" fill="#F7D8B6"/>' +
+      '<path d="M8 8 A 5.6 5.6 0 0 1 20 8 Z" fill="#9A9A9A"/>' +
+      '<circle cx="12.4" cy="9.6" r="1.1" fill="#2B3138"/>' +
+      '<g class="wave"><rect x="24" y="2" width="4" height="10" rx="2" fill="#F7D8B6"/></g>' +
+      '</g>' +
+      '<rect x="4" y="15" width="66" height="7" rx="3.5" fill="#C7D2DA"/>' +
+      '<rect x="4" y="15" width="66" height="2.4" rx="1.2" fill="#E7EDF1"/>' +
+      '<rect x="11" y="21" width="4" height="11" fill="#9EA7AF"/>' +
+      '<rect x="59" y="21" width="4" height="11" fill="#9EA7AF"/>' +
+      '<circle cx="13" cy="34" r="4" fill="#2B3138"/>' +
+      '<circle cx="61" cy="34" r="4" fill="#2B3138"/>' +
+      '</svg>';
+  }
+
+  /* 跌倒的阿公。刻意畫得不可怕：沒有血、沒有哭，只是坐在地上扶著腳，
+     眉毛皺起來。最後他會在醫院裡揮手，小孩才知道結局是「他沒事」。 */
+  function hurtPerson(){
+    return '<svg viewBox="0 0 46 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+      '<rect x="15" y="29" width="28" height="9" rx="4.5" fill="#5B6B7A"/>' +
+      '<rect x="36" y="27" width="9" height="7" rx="3" fill="#8A6A4F"/>' +
+      '<rect x="10" y="13" width="17" height="21" rx="6" fill="#7A8C9B"/>' +
+      '<circle cx="18" cy="8" r="7.4" fill="#F7D8B6"/>' +
+      '<path d="M10.6 7 A 7.4 7.4 0 0 1 25.4 7 Z" fill="#9A9A9A"/>' +
+      '<circle cx="15" cy="9" r="1.4" fill="#2B3138"/>' +
+      '<circle cx="21" cy="9" r="1.4" fill="#2B3138"/>' +
+      '<path d="M15 14 Q18 12.2 21 14" stroke="#2B3138" stroke-width="1.2" fill="none" stroke-linecap="round"/>' +
+      '<rect x="23" y="19" width="15" height="6" rx="3" fill="#7A8C9B" transform="rotate(22 23 21)"/>' +
+      '</svg>';
+  }
+
+  // 醫院門口接手的人：白袍醫生、護理師
+  function staff(coat, hair){
+    return '<svg viewBox="0 0 30 54" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+      '<rect x="7" y="26" width="18" height="28" rx="6" fill="' + coat + '"/>' +
+      '<rect x="14" y="26" width="3" height="28" fill="#CBD6DD"/>' +
+      '<path d="M11 26 Q15 35 19 26" stroke="#2B3138" stroke-width="1.3" fill="none"/>' +
+      '<circle cx="15" cy="16" r="8" fill="#F7D8B6"/>' +
+      '<path d="M6 15 A 9 9 0 0 1 24 15 Z" fill="' + hair + '"/>' +
+      '<circle cx="12" cy="17" r="1.5" fill="#2B3138"/>' +
+      '<circle cx="18" cy="17" r="1.5" fill="#2B3138"/>' +
+      '<path d="M12 21 Q15 23.6 18 21" stroke="#2B3138" stroke-width="1.3" fill="none" stroke-linecap="round"/>' +
+      '<g class="arm"><rect x="1.5" y="26" width="7.5" height="20" rx="3.75" fill="' + coat + '"/></g>' +
+      '<g class="wave"><rect x="21" y="26" width="7.5" height="20" rx="3.75" fill="' + coat + '"/></g>' +
+      '</svg>';
+  }
+
+  /* 擋在前面的車。畫成車頭朝左，跟車庫裡的車一樣靠 CSS 翻面，
+     車尾（畫面左側）有方向燈，讓路的時候會閃。 */
+  function roadCar(kind){
+    var wheels =
+      '<circle cx="34" cy="55" r="10" fill="#2B3138"/><circle cx="34" cy="55" r="4" fill="#D6DEE4"/>' +
+      '<circle cx="106" cy="55" r="10" fill="#2B3138"/><circle cx="106" cy="55" r="4" fill="#D6DEE4"/>';
+    var blinker = '<rect class="amb-blink" x="126" y="40" width="9" height="7" rx="2.5" fill="#F5A524"/>';
+
+    if(kind === "bus"){
+      return '<svg viewBox="0 0 140 70" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+        '<rect x="6" y="12" width="130" height="42" rx="7" fill="#2F7FD1"/>' +
+        '<rect x="6" y="34" width="130" height="5" fill="#E7EDF1"/>' +
+        '<rect x="10" y="18" width="22" height="14" rx="3" fill="#DCF0F8"/>' +
+        '<rect x="40" y="18" width="20" height="14" rx="3" fill="#BFE3F2"/>' +
+        '<rect x="66" y="18" width="20" height="14" rx="3" fill="#BFE3F2"/>' +
+        '<rect x="92" y="18" width="20" height="14" rx="3" fill="#BFE3F2"/>' +
+        blinker + wheels + '</svg>';
+    }
+    if(kind === "truck"){
+      return '<svg viewBox="0 0 140 70" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+        '<rect x="54" y="14" width="82" height="40" rx="4" fill="#C89A5B"/>' +
+        '<rect x="54" y="14" width="82" height="7" rx="3" fill="#B0854A"/>' +
+        '<path d="M8 54 L8 26 Q8 20 16 19 L44 16 L54 16 L54 54 Z" fill="#E0653F"/>' +
+        '<rect x="14" y="24" width="28" height="14" rx="3" fill="#DCF0F8"/>' +
+        blinker + wheels + '</svg>';
+    }
+    // mixer
+    return '<svg viewBox="0 0 140 70" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+      '<rect x="46" y="40" width="90" height="14" rx="3" fill="#B9601F"/>' +
+      '<g transform="rotate(-9 92 30)">' +
+      '<ellipse cx="92" cy="30" rx="36" ry="20" fill="#EE7B2E"/>' +
+      '<path d="M76 12 q8 18 0 36" stroke="#C9611F" stroke-width="3" fill="none"/>' +
+      '<path d="M96 11 q8 19 0 38" stroke="#C9611F" stroke-width="3" fill="none"/>' +
+      '</g>' +
+      '<path d="M6 54 L6 26 Q6 20 14 19 L40 16 L50 16 L50 54 Z" fill="#F0A33E"/>' +
+      '<rect x="12" y="24" width="26" height="14" rx="3" fill="#DCF0F8"/>' +
+      blinker + wheels + '</svg>';
+  }
+
+  /* 醫院。門口是急診室，鐵捲門一樣的自動門會打開讓擔架進去。
+     紅十字放大一點，因為那是小孩唯一認得出「這是醫院」的記號。 */
+  var HOSPITAL =
+    '<svg viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<rect x="12" y="26" width="236" height="174" fill="#F0F4F7"/>' +
+    '<rect x="12" y="26" width="236" height="12" fill="#D9E2E8"/>' +
+    '<rect x="108" y="48" width="44" height="14" rx="3" fill="#E03131"/>' +
+    '<rect x="123" y="33" width="14" height="44" rx="3" fill="#E03131"/>' +
+    '<g fill="#BFE3F2">' +
+    '<rect x="28" y="92" width="26" height="22" rx="3"/><rect x="66" y="92" width="26" height="22" rx="3"/>' +
+    '<rect x="168" y="92" width="26" height="22" rx="3"/><rect x="206" y="92" width="26" height="22" rx="3"/>' +
+    '<rect x="28" y="130" width="26" height="22" rx="3"/><rect x="66" y="130" width="26" height="22" rx="3"/>' +
+    '<rect x="168" y="130" width="26" height="22" rx="3"/><rect x="206" y="130" width="26" height="22" rx="3"/>' +
+    '</g>' +
+    '<rect x="98" y="122" width="64" height="16" rx="4" fill="#E03131"/>' +
+    '<text x="130" y="135" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="middle">急診</text>' +
+    '<rect x="96" y="144" width="68" height="56" rx="3" fill="#2B4E7E"/>' +
+    '<g class="amb-doors">' +
+    '<rect class="amb-door-l" x="98" y="146" width="32" height="54" fill="#8FD2F2"/>' +
+    '<rect class="amb-door-r" x="130" y="146" width="32" height="54" fill="#8FD2F2"/>' +
+    '</g>' +
+    '</svg>';
+
+  // 馬路兩旁的店面，行駛時往後捲，速度感就出來了
+  var STREET =
+    '<svg viewBox="0 0 420 150" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<rect x="8" y="58" width="92" height="92" fill="#E8DCC8"/>' +
+    '<rect x="8" y="58" width="92" height="10" fill="#C9B894"/>' +
+    '<rect x="24" y="80" width="26" height="22" rx="3" fill="#BFE3F2"/>' +
+    '<rect x="60" y="80" width="26" height="22" rx="3" fill="#BFE3F2"/>' +
+    '<rect x="128" y="34" width="86" height="116" fill="#D7E0E6"/>' +
+    '<rect x="128" y="34" width="86" height="10" fill="#B6C3CC"/>' +
+    '<g fill="#A8DCF0"><rect x="142" y="56" width="22" height="20" rx="3"/><rect x="178" y="56" width="22" height="20" rx="3"/>' +
+    '<rect x="142" y="92" width="22" height="20" rx="3"/><rect x="178" y="92" width="22" height="20" rx="3"/></g>' +
+    '<rect x="244" y="70" width="80" height="80" fill="#F2E3D2"/>' +
+    '<rect x="244" y="70" width="80" height="10" fill="#D8C4AC"/>' +
+    '<rect x="262" y="94" width="44" height="26" rx="3" fill="#8FD2F2"/>' +
+    '<rect x="352" y="48" width="12" height="102" fill="#8C98A3"/>' +
+    '<rect x="340" y="30" width="36" height="46" rx="6" fill="#4A535C"/>' +
+    '<circle cx="358" cy="42" r="7" fill="#E03131"/>' +
+    '<circle cx="358" cy="58" r="7" fill="#F2B01E"/>' +
+    '<circle cx="358" cy="74" r="7" fill="#3C8C3C"/>' +
+    '</svg>';
 
   // 四個目的地的地標。每飛一趟換一個國家，這是飛機獨有的重玩價值。
   /* 高鐵沿線的景色：出發時是城市，一路開就變成鄉下。
@@ -560,6 +744,52 @@
     '<rect x="0" y="2" width="120" height="16" rx="3" fill="#C4CDD4"/>' +
     '<rect x="0" y="2" width="120" height="5" rx="2" fill="#DCE3E8"/>' +
     '</svg>';
+
+  /* ============ 救護車：讓路這件事的狀態 ============
+     放在模組層，因為它要跨好幾次點擊存活。 */
+  var ambPass = 0;        // 已經有幾台車讓過了
+  var ambLast = 0;        // 上一台讓路的時間，連點時拿來擋
+  var ambOnRoad = false;  // 只有在馬路上那一段才收點擊
+
+  var AMB_CARS = ["公車", "卡車", "水泥車"];
+
+  function ambReset(el){
+    ambPass = 0; ambLast = 0; ambOnRoad = false;
+    Array.prototype.forEach.call(el.querySelectorAll(".amb-car"), function(car){
+      car.classList.remove("amb-here", "amb-gone");
+    });
+  }
+
+  // 下一台車開進畫面，停在救護車前面擋著
+  function ambBring(el, n){
+    var car = el.querySelector(".amb-car.amb-c" + n);
+    if(car){ car.classList.add("amb-here"); }
+  }
+
+  /* 讓一台車靠邊。小孩點畫面會讓它提早發生，沒點的話時間到了車子自己會讓——
+     所以這裡不會卡關，但點了也真的有差別。 */
+  function ambYield(ctx, byTap){
+    if(ambPass >= 3) return false;
+    var t = Date.now();
+    // 連點不要讓三台一起閃開，那樣就看不出是誰讓的了
+    if(byTap && t - ambLast < 1100) return false;
+    ambLast = t;
+    ambPass++;
+
+    var car = ctx.props.querySelector(".amb-car.amb-c" + ambPass);
+    if(car){ car.classList.remove("amb-here"); car.classList.add("amb-gone"); }
+
+    yieldBeep();
+    var line = "謝謝" + AMB_CARS[ambPass - 1] + "讓路！";
+    ctx.caption.textContent = line;
+    ctx.say(line);
+
+    if(ambPass < 3){
+      var next = ambPass + 1;
+      ctx.later(function(){ ambBring(ctx.props, next); }, 700);
+    }
+    return true;
+  }
 
   var VEHICLES = [
     {
@@ -1131,6 +1361,117 @@
         '</g>' +
         railWheel(80,128,11) + railWheel(222,128,11) + railWheel(360,128,11) +
         '</svg>'
+    },
+    {
+      /* 救護車跟其他六台最大的不同有兩個。
+         一，它載的是人，所以擔架是「推」進去的，不能像垃圾袋那樣用丟的。
+         二，它趕時間，而趕得到趕不到要看路上的人讓不讓——所以這是全站
+         唯一真的需要小孩動手的車：點一下，前面那台車就靠邊。
+         沒點也不會卡住，時間到了車子自己會讓，這個站沒有失敗狀態。 */
+      id:"ambu", name:"救護車", tint:"#E03131", track:"road",
+      sound:ambuSiren,
+      job:"有人跌倒了！救護員把阿公抬上擔架，推進救護車",
+      thanks:"大家讓路，救護車才能快點到，阿公就得救了",
+      stop:30,
+      jobSound:function(){ ambuSiren(); },
+      // 擔架只有一台，所以不需要間隔；慢一點出發，讓救護員先跑到位
+      fly:[{ sel:".amb-cot", target:".load-port", step:0, first:1.5 }],
+      jobMs:19400,
+      loadedMs:4200,
+      doneMs:16200,
+      before:function(ctx){ ambReset(ctx.props); },
+      onTap:function(ctx){
+        if(!ambOnRoad) return false;   // 還沒上路，就讓它單純鳴笛
+        return ambYield(ctx, true);
+      },
+      extra:function(ctx){
+        // 關門、鳴笛、上路。前面那台車這時候才出現，小孩的工作從這裡開始
+        ctx.later(function(){
+          ambOnRoad = true;
+          ambuSiren();
+          ctx.scene.setAttribute('data-phase','travel');
+          ambBring(ctx.props, 1);
+          ctx.caption.textContent = '救護車要趕去醫院，大家讓一讓！';
+          ctx.say('救護車要趕去醫院，大家讓一讓');
+        }, 3200);
+
+        // 小孩沒點的話，車子自己會讓。三個時間點剛好蓋掉三台。
+        ctx.later(function(){ ambYield(ctx, false); }, 4800);
+        ctx.later(function(){ ambYield(ctx, false); }, 7400);
+        ctx.later(function(){ ambYield(ctx, false); }, 10000);
+
+        // 到醫院了。救護車是倒車進急診室的，這是真的，小孩很愛看
+        ctx.later(function(){
+          ambOnRoad = false;
+          reverseBeep();
+          ctx.scene.setAttribute('data-phase','arrived');
+          ctx.caption.textContent = '到醫院了！救護車倒車進急診室';
+          ctx.say('到醫院了！救護車倒車進急診室');
+        }, 11600);
+
+        // 擔架推出來，交到醫生手上。監測器穩穩地嗶著＝他沒事了
+        ctx.later(function(){
+          monitorBeep();
+          ctx.caption.textContent = '醫生和護理師接手，把阿公推進醫院';
+          ctx.say('醫生和護理師接手，把阿公推進醫院');
+        }, 13400);
+      },
+      props:
+        prop("amb-street", 104, 92, 96, STREET) +
+        prop("amb-hosp", -3, 28, 42, HOSPITAL) +
+        prop("amb-doc", 23, 30, 5.4, staff("#F4F7F9", "#3A2E28")) +
+        prop("amb-nurse", 27.5, 30, 5.2, staff("#F0DCE4", "#4A3A2E")) +
+        prop("amb-cot2", 30, 30, 16, cot()) +
+        prop("amb-car amb-c1", 76, 34, 23, roadCar("bus")) +
+        prop("amb-car amb-c2", 76, 34, 23, roadCar("truck")) +
+        prop("amb-car amb-c3", 76, 34, 23, roadCar("mixer")) +
+        prop("amb-hurt", 7, 30, 10, hurtPerson()) +
+        prop("amb-cot", 14, 30, 13, cot()) +
+        prop("amb-medic", 25.5, 30, 5.8, medic()) +
+        prop("kid amb-local", 1, 30, 4.4, kid("#2F7FD1")),
+      svg: '<svg viewBox="0 0 380 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="救護車">' +
+        '<g class="body">' +
+        // 車廂。台灣的救護車是白底加橘紅色條紋
+        '<rect x="76" y="40" width="258" height="86" rx="8" fill="#FFFFFF"/>' +
+        '<rect x="76" y="40" width="258" height="10" rx="5" fill="#EDF2F5"/>' +
+        '<rect x="76" y="94" width="258" height="13" fill="#F26A21"/>' +
+        '<rect x="76" y="107" width="258" height="5" fill="#E03131"/>' +
+        // 紅十字：小孩唯一認得出「這是醫療」的記號
+        '<rect x="214" y="66" width="46" height="13" rx="2" fill="#E03131"/>' +
+        '<rect x="230" y="50" width="14" height="45" rx="2" fill="#E03131"/>' +
+        // 側窗。載到人之後，從這裡看得見裡面躺著阿公
+        '<rect x="104" y="54" width="52" height="32" rx="4" fill="#BFE3F2"/>' +
+        '<g class="amb-inside">' +
+        '<rect x="106" y="72" width="48" height="8" rx="4" fill="#E7EDF1"/>' +
+        '<circle cx="146" cy="67" r="6.4" fill="#F7D8B6"/>' +
+        '<path d="M139.6 66 A 6.4 6.4 0 0 1 152.4 66 Z" fill="#9A9A9A"/>' +
+        '</g>' +
+        // 車尾雙開門（SVG 右端＝畫面左端＝車尾）。門後是車廂內部，
+        // 顏色不能太黑，不然門一開看起來像一個洞
+        '<rect x="282" y="46" width="52" height="76" rx="3" fill="#48566A"/>' +
+        '<rect x="282" y="104" width="52" height="18" fill="#394554"/>' +
+        '<g class="amb-door amb-door-a">' +
+        '<rect x="282" y="44" width="26" height="80" rx="3" fill="#F7FAFB"/>' +
+        '<rect x="285" y="56" width="20" height="26" rx="3" fill="#BFE3F2"/>' +
+        '</g>' +
+        '<g class="amb-door amb-door-b">' +
+        '<rect x="308" y="44" width="26" height="80" rx="3" fill="#F2F6F8"/>' +
+        '<rect x="311" y="56" width="20" height="26" rx="3" fill="#BFE3F2"/>' +
+        '</g>' +
+        // 駕駛室
+        '<path d="M14 126 L14 72 Q14 60 26 58 L58 54 L80 54 L80 126 Z" fill="#FFFFFF"/>' +
+        '<path d="M26 68 L70 64 L70 92 L24 92 Z" fill="#BFE3F2"/>' +
+        '<path d="M26 68 L48 66 L32 92 L24 92 Z" fill="#DCF0F8"/>' +
+        '<rect x="14" y="94" width="66" height="13" fill="#F26A21"/>' +
+        '<rect x="10" y="108" width="14" height="16" rx="4" fill="#5D6874"/>' +
+        // 車頂警示燈，紅藍交替閃
+        '<rect x="92" y="26" width="120" height="13" rx="6.5" fill="#C2CAD2"/>' +
+        '<rect x="100" y="26" width="38" height="13" rx="6.5" fill="#E53935" class="beacon"/>' +
+        '<rect x="160" y="26" width="38" height="13" rx="6.5" fill="#1E88E5" class="beacon b2"/>' +
+        loadPort(286, 58, 46, 52) +
+        '</g>' +
+        wheel(120,134,26) + wheel(268,134,26) +
+        '</svg>'
     }
   ];
 
@@ -1265,13 +1606,25 @@
   }
 
   /* 點車子 → 開到現場、停下、把東西搬進車裡（或搬出去）、再繼續開 */
+  // 工作進行中要用到的東西，給 extra() 和 onTap() 共用同一份
+  var jobCtx = null;
+
   function doJob(){
-    if(busy){ current.jobSound(); return; }  // 連點時至少要有聲音回應
+    if(busy){
+      /* 工作中再點：大部分的車就是再響一次。救護車不一樣——它的點擊
+         是真的有作用的（讓前面那台車靠邊），所以先問它要不要收下。 */
+      if(current.onTap && jobCtx && current.onTap(jobCtx)) return;
+      current.jobSound();
+      return;
+    }
     busy = true;
     clearTimers();
 
     var v = current;
     var parked = v.stop;
+
+    jobCtx = { later: later, rider: rider, scene: scene, props: propsEl, caption: caption, say: say };
+    if(v.before){ v.before(jobCtx); }
     var jobMs = v.jobMs || 5900;
     // 大部分的車「裝滿」和「工作完成」是同一刻；飛機不是，它要飛到別的
     // 國家才算完成，所以這兩個時間點可以各自指定。
@@ -1292,7 +1645,7 @@
       caption.classList.add('on');
       v.jobSound();
       say(v.job);
-      if(v.extra){ v.extra({ later: later, rider: rider, scene: scene, props: propsEl, caption: caption, say: say }); }
+      if(v.extra){ v.extra(jobCtx); }
     }, 1250);
 
     // 3. 車子看得出來裝到東西了
